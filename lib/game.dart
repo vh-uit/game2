@@ -95,7 +95,7 @@ class _GameStateState extends State<GameState> {
                         borderRadius: BorderRadius.circular(8.0),
                         boxShadow: [
                            BoxShadow(
-                             color: Colors.grey.withOpacity(0.5),
+                             color: Colors.grey.withValues(alpha: .5),
                              spreadRadius: 1,
                              blurRadius: 3,
                              offset: const Offset(0, 2),

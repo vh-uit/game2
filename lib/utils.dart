@@ -90,12 +90,12 @@ List<List<int>> sequencesOfSum(int targetSum, int index, int rowLength, List<Cel
   // Initial check: Can the starting cell even participate?
   if (index >= 0 && index < cells.length && cells[index].value > 0 && cells[index].value <= targetSum) {
      dfs(targetSum, index);
-  } else if (index >= 0 && index < cells.length && cells[index] == targetSum && targetSum == 0) {
+  } else if (index >= 0 && index < cells.length && cells[index].value == targetSum && targetSum == 0) {
      // Handle edge case if targetSum is 0 and start cell is 0, if needed.
      // Based on the code, 0s are blockers, so likely nothing.
      // If targetSum can be 0 and cells[index] can be 0, define behavior.
      // Current logic assumes targetSum > 0 or cells[index] > 0.
-  } else if (index >= 0 && index < cells.length && cells[index] == targetSum && targetSum > 0) {
+  } else if (index >= 0 && index < cells.length && cells[index].value  == targetSum && targetSum > 0) {
       // If the start node itself is the target sum
       result.add([index]);
   }
