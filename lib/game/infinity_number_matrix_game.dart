@@ -54,7 +54,21 @@ class InfinityNumberMatrixGame extends FlameGame
     }
   }
 
-  void handleTileTap(math_dart.Point<int> tappedGridPosition) {
+  /// Attempts to claim a tile at the selected position with the given number.
+  void _attemptClaimTile(int number) {
+    if (_selectedCellPosition == null) return;
+    final result = board.claimFrontierTile(_selectedCellPosition!, number);
+    if (result['claimedTile'] != null) {
+      _cellComponents[_selectedCellPosition!]!.setValueAndType(number, TileType.claimed);
+      for (final frontier in result['addedFrontier'] as List<math_dart.Point<int>>) {
+        _updateCellComponent(frontier, TileType.frontier);
+      }
+      print(board.findChainsWithSum(_selectedCellPosition!, 20));
+    }
+  }
+
+  /// Handles selection/deselection of a cell.
+  void _selectCell(math_dart.Point<int> tappedGridPosition) {
     if (_selectedCellPosition == tappedGridPosition) {
       _cellComponents[_selectedCellPosition!]!.isSelected = false;
       _selectedCellPosition = null;
@@ -65,6 +79,10 @@ class InfinityNumberMatrixGame extends FlameGame
       _selectedCellPosition = tappedGridPosition;
       _cellComponents[_selectedCellPosition!]!.isSelected = true;
     }
+  }
+
+  void handleTileTap(math_dart.Point<int> tappedGridPosition) {
+    _selectCell(tappedGridPosition);
   }
 
   void clampZoom(double zoomDelta) {
@@ -116,20 +134,8 @@ class InfinityNumberMatrixGame extends FlameGame
       } else if (event.logicalKey.keyLabel.length == 1 &&
           int.tryParse(event.logicalKey.keyLabel) != null) {
         int number = int.parse(event.logicalKey.keyLabel);
-        if (number >= 0 && number <= 9 && _selectedCellPosition != null) {
-          final result = board.claimFrontierTile(
-            _selectedCellPosition!,
-            number,
-          );
-          if (result['claimedTile'] != null) {
-            _cellComponents[_selectedCellPosition!]!.value = number;
-            _updateCellComponent(_selectedCellPosition!, TileType.claimed);
-            for (final frontier
-                in result['addedFrontier'] as List<math_dart.Point<int>>) {
-              _updateCellComponent(frontier, TileType.frontier);
-            }
-            print(board.findChainsWithSum(_selectedCellPosition!, 20));
-          }
+        if (number >= 0 && number <= 9) {
+          _attemptClaimTile(number);
         }
       }
     }

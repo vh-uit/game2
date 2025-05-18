@@ -15,12 +15,12 @@ class CellComponent extends PositionComponent with TapCallbacks {
   bool isSelected = false;
   late Paint _paint;
 
+  // Remove value parameter from constructor, always use explicit setter for value.
   CellComponent({
     required this.gridPosition,
     required this.type,
     required this.gameRef,
     this.isSelected = false,
-    value = 0
   }) : super(
           position: Vector2(
             gridPosition.x * (cellSize + cellMargin),
@@ -31,24 +31,26 @@ class CellComponent extends PositionComponent with TapCallbacks {
     _updatePaint();
   }
 
+  // Remove value from _updatePaint, only add TextComponent if type is claimed and value != 0
   void _updatePaint() {
     switch (type) {
       case TileType.claimed:
         _paint = claimedColor.paint();
-        add(TextComponent(
-          text: value.toString(),
-          position: Vector2(cellSize / 2, cellSize / 2),
-          anchor: Anchor.center,
+        if (value != 0) {
+          add(TextComponent(
+            text: value.toString(),
+            position: Vector2(cellSize / 2, cellSize / 2),
+            anchor: Anchor.center,
             textRenderer: TextPaint(
-            style: TextStyle(
-              fontFamily: 'Roboto',
-              fontWeight: FontWeight.bold,
-              fontSize: cellSize * 0.7,
-              color: CupertinoColors.white,
-              
+              style: TextStyle(
+                fontFamily: 'Roboto',
+                fontWeight: FontWeight.bold,
+                fontSize: cellSize * 0.7,
+                color: CupertinoColors.white,
+              ),
             ),
-          ),
-        ));
+          ));
+        }
         break;
       case TileType.frontier:
         _paint = frontierColor.paint();
@@ -86,5 +88,11 @@ class CellComponent extends PositionComponent with TapCallbacks {
       type = newType;
       _updatePaint();
     }
+  }
+
+  /// Atomically set the value and type of the cell, and update paint.
+  void setValueAndType(int newValue, TileType newType) {
+    value = newValue;
+    updateType(newType);
   }
 }
