@@ -1,6 +1,5 @@
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
-import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:game2/config.dart';
@@ -9,30 +8,24 @@ import 'cell_manager.dart';
 import 'dart:math' as math_dart;
 import 'package:flutter/foundation.dart';
 
-class InfinityNumberMatrixGame extends FlameGame
-    with ScrollDetector, ScaleDetector, KeyboardEvents {
+class InfMatrixWorld extends World {
   late Board board;
   late final CellManager cellManager;
-
-  @override
-  Color backgroundColor() => const Color.fromARGB(255, 255, 249, 225);
+  late double startZoom;
 
   @override
   Future<void> onLoad() async {
     await super.onLoad();
-    // Move board creation to a background isolate
     board = await compute(_createBoardInIsolate, null);
     cellManager = CellManager(this);
     cellManager.selectedCellPosition = null;
     cellManager.initializeBoardView(board);
   }
 
-  // Helper for compute
   static Board _createBoardInIsolate(dynamic _) {
     return Board();
   }
 
-  /// Attempts to claim a tile at the selected position with the given number.
   void attemptClaimTile(int number) => _attemptClaimTile(number);
 
   void _attemptClaimTile(int number) {
@@ -50,42 +43,26 @@ class InfinityNumberMatrixGame extends FlameGame
     }
   }
 
-  void clampZoom(double zoomDelta) {
-    camera.viewfinder.zoom = zoomDelta.clamp(0.5, 3.0);
+  // The following input handlers must be called from the parent FlameGame
+  void handleScroll(PointerScrollInfo info, CameraComponent camera) {
+    clampZoom(camera.viewfinder.zoom + info.scrollDelta.global.y.sign * zoomPerScrollUnit, camera);
   }
 
-  static const zoomPerScrollUnit = .3;
-
-  @override
-  void onScroll(PointerScrollInfo info) {
-    clampZoom(camera.viewfinder.zoom + info.scrollDelta.global.y.sign * zoomPerScrollUnit);
-  }
-
-  late double startZoom;
-
-  @override
-  void onScaleStart(_) {
+  void handleScaleStart(CameraComponent camera) {
     startZoom = camera.viewfinder.zoom;
-    
   }
 
-  @override
-  void onScaleUpdate(ScaleUpdateInfo info) {
+  void handleScaleUpdate(ScaleUpdateInfo info, CameraComponent camera) {
     final currentScale = info.scale.global;
-    
     if (!currentScale.isIdentity()) {
-      clampZoom((currentScale.y)*startZoom);
+      clampZoom((currentScale.y) * startZoom, camera);
     } else {
       final delta = info.delta.global;
       camera.moveBy(-delta);
     }
   }
 
-  @override
-  KeyEventResult onKeyEvent(
-    KeyEvent event,
-    Set<LogicalKeyboardKey> keysPressed,
-  ) {
+  void handleKeyEvent(KeyEvent event, CameraComponent camera) {
     if (event is KeyDownEvent) {
       if (event.logicalKey == LogicalKeyboardKey.arrowUp) {
         camera.moveBy(Vector2(0, -10));
@@ -103,10 +80,14 @@ class InfinityNumberMatrixGame extends FlameGame
         }
       }
     }
-    return KeyEventResult.handled;
   }
 
-  /// Animates (highlights) the given list of points, one after another, each for 0.7s.
+  void clampZoom(double zoomDelta, CameraComponent camera) {
+    camera.viewfinder.zoom = zoomDelta.clamp(0.5, 3.0);
+  }
+
+  static const zoomPerScrollUnit = .3;
+
   Future<void> animateChainHighlight(List<math_dart.Point<int>> points, Duration duration) async {
     for (final point in points) {
       final cell = cellManager.cellComponents[point];
@@ -116,7 +97,6 @@ class InfinityNumberMatrixGame extends FlameGame
     }
   }
 
-  /// Animates (highlights) all chains in parallel, each cell for 0.7s.
   Future<void> animateChainsHighlight(List<List<math_dart.Point<int>>> chains) async {
     final futures1 = <Future>[];
     for (final chain in chains) {
