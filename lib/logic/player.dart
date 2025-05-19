@@ -31,6 +31,16 @@ class Player {
     score += points;
   }
 
+  /// Calculates the score based on unique cells in chains.
+  int calculateScoreFromChains(List<List<dynamic>> chains) {
+    final uniqueCells = <dynamic>{};
+    for (final chain in chains) {
+      uniqueCells.addAll(chain);
+    }
+    final score = uniqueCells.length;
+    return score;
+  }
+
   @override
   String toString() {
     return 'Player{name: $name, score: $score, remainingPoints: $remainingPoints}';

@@ -15,6 +15,7 @@ class Board {
   final Map<Point<int>, int> _tiles = {};
   final Set<Point<int>> _frontier = {};
   late final List<Player> _players;
+  int _currentPlayerIndex = 0;
 
   Board({int playerNumber = 1}) {
     // Start with one frontier tile at the origin
@@ -129,5 +130,13 @@ class Board {
       return TileType.frontier;
     }
     return TileType.empty;
+  }
+
+  List<Player> get players => _players;
+  Player get currentPlayer => _players[_currentPlayerIndex];
+  int get currentPlayerIndex => _currentPlayerIndex;
+
+  void nextPlayer() {
+    _currentPlayerIndex = (_currentPlayerIndex + 1) % _players.length;
   }
 }

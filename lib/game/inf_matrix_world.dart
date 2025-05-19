@@ -6,7 +6,6 @@ import 'package:flame/events.dart';
 import 'package:flutter/services.dart';
 import 'package:game2/config.dart';
 import 'package:game2/logic/board.dart';
-import 'package:game2/logic/player.dart';
 import 'cell_manager.dart';
 import 'dart:math' as math_dart;
 import 'package:flutter/foundation.dart';
@@ -20,9 +19,6 @@ class InfMatrixWorld extends World {
 
   /// The initial zoom level for the world view.
   late double startZoom;
-
-  /// The player currently in this world.
-  late Player player;
 
   /// Notifies listeners of score changes.
   final ValueNotifier<int> scoreNotifier;
@@ -38,7 +34,6 @@ class InfMatrixWorld extends World {
     cellManager = CellManager(this);
     cellManager.selectedCellPosition = null;
     cellManager.initializeBoardView(board);
-    player = Player(name: 'Player 1');
     // Remove NumSelectorComponent from world, use overlay instead
     final game = findGame();
     game?.overlays.add('NumSelector');
@@ -73,21 +68,10 @@ class InfMatrixWorld extends World {
       );
       if (chains.isNotEmpty) {
         animateChainsHighlight(chains);
-        player.updateScore(calcScore(chains));
-        scoreNotifier.value = player.score;
+        board.currentPlayer.updateScore(board.currentPlayer.calculateScoreFromChains(chains));
+        scoreNotifier.value = board.currentPlayer.score;
       }
     }
-  }
-
-  int calcScore(List<List<math_dart.Point<int>>> chains) {
-    int score = 0;
-    final uniqueCells = <math_dart.Point<int>>{};
-    for (final chain in chains) {
-      uniqueCells.addAll(chain);
-    }
-    score = uniqueCells.length;
-    print("Score calculated: $score");
-    return score;
   }
 
   // The following input handlers must be called from the parent FlameGame

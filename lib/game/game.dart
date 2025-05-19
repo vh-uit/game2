@@ -45,7 +45,7 @@ class InfinityNumberMatrixGameWithRouter extends FlameGame
       final world = currentWorld;
       if (world != null) {
         return PlayerScoreOverlay(
-          player: world.player,
+          player: world.board.currentPlayer,
           scoreNotifier: playerScoreNotifier,
         );
       } else {
