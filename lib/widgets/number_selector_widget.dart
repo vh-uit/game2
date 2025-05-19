@@ -8,6 +8,7 @@ class NumSelectorWidget extends StatelessWidget {
   final double spacing;
   final double borderRadius;
   final double fontSize;
+  final bool bottomAlignment;
 
   const NumSelectorWidget({
     super.key,
@@ -16,6 +17,7 @@ class NumSelectorWidget extends StatelessWidget {
     required this.spacing,
     required this.borderRadius,
     required this.fontSize,
+    this.bottomAlignment = true,
   });
 
   @override
@@ -26,7 +28,7 @@ class NumSelectorWidget extends StatelessWidget {
     return IgnorePointer(
       ignoring: false,
       child: Align(
-        alignment: Alignment.bottomCenter,
+        alignment: bottomAlignment ? Alignment.bottomCenter : Alignment.topCenter,
         child: Material(
           color: Colors.transparent,
           child: Padding(

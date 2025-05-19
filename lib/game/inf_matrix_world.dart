@@ -34,7 +34,6 @@ class InfMatrixWorld extends World {
     cellManager = CellManager(this);
     cellManager.selectedCellPosition = null;
     cellManager.initializeBoardView(board);
-    // Remove NumSelectorComponent from world, use overlay instead
     final game = findGame();
     game?.overlays.add('NumSelector');
     game?.overlays.add('PlayerScore');
