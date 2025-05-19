@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="description" content="API docs for the CellManager class from the cell_manager library, for the Dart programming language.">
+  <title>CellManager class - cell_manager library - Dart API</title>
+
+
+  
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../static-assets/github.css?v1">
+  <link rel="stylesheet" href="../static-assets/styles.css?v1">
+  <link rel="icon" href="../static-assets/favicon.png?v1">
+  
+</head>
+
+<body data-base-href="../" data-using-base-href="false" class="light-theme">
+<div id="overlay-under-drawer"></div>
+<header id="title">
+  <span id="sidenav-left-toggle" class="material-symbols-outlined" role="button" tabindex="0">menu</span>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="../index.html">game2</a></li>
+    <li><a href="../game_cell_manager/">game\cell_manager.dart</a></li>
+    <li class="self-crumb">CellManager class</li>
+  </ol>
+  <div class="self-name">CellManager</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+  <div class="toggle" id="theme-button" title="Toggle brightness">
+    <label for="theme">
+      <input type="checkbox" id="theme" value="light-theme">
+      <span id="dark-theme-button" class="material-symbols-outlined">
+        dark_mode
+      </span>
+      <span id="light-theme-button" class="material-symbols-outlined">
+        light_mode
+      </span>
+    </label>
+  </div>
+</header>
+<main>
+<div
+    id="dartdoc-main-content"
+    class="main-content"
+    data-above-sidebar="game_cell_manager&#47;game_cell_manager-library-sidebar.html"
+    data-below-sidebar="game_cell_manager&#47;CellManager-class-sidebar.html">
+    <div>
+<h1><span class="kind-class">CellManager</span> class 
+ 
+</h1></div>
+
+    
+<section class="desc markdown">
+  <p>Manages the lifecycle and state of <a href="../game_components_cell_component/CellComponent-class.html">CellComponent</a>s in the game world.</p>
+<p>Responsible for adding, updating, and selecting cells based on the <a href="../logic_board/Board-class.html">Board</a>.</p>
+</section>
+
+
+
+    
+  <section class="summary offset-anchor" id="constructors">
+    <h2>Constructors</h2>
+    <dl class="constructor-summary-list">
+        <dt id="CellManager.new" class="callable">
+          <span class="name"><a href="../game_cell_manager/CellManager/CellManager.html">CellManager.new</a></span><span class="signature">(<span class="parameter" id="-param-world"><span class="type-annotation"><a href="../game_inf_matrix_world/InfMatrixWorld-class.html">InfMatrixWorld</a></span> <span class="parameter-name">world</span></span>)</span>
+        </dt>
+        <dd>
+          Creates a <a href="../game_cell_manager/CellManager-class.html">CellManager</a> for the given <code>world</code>.
+        </dd>
+    </dl>
+  </section>
+    
+  <section
+      class="summary offset-anchor"
+      id="instance-properties">
+    <h2>Properties</h2>
+    <dl class="properties">
+        <dt id="cellComponents" class="property">
+  <span class="name"><a href="../game_cell_manager/CellManager/cellComponents.html">cellComponents</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-math/Point-class.html">Point</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>&gt;</span></span>, <span class="type-parameter"><a href="../game_components_cell_component/CellComponent-class.html">CellComponent</a></span>&gt;</span></span>
+  
+
+</dt>
+<dd>
+  All cell components managed by this instance, keyed by their grid position.
+  <div class="features"><span class="feature">no setter</span></div>
+
+</dd>
+
+        <dt id="hashCode" class="property inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/hashCode.html">hashCode</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>
+  
+
+</dt>
+<dd class="inherited">
+  The hash code for this object.
+  <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="runtimeType" class="property inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/runtimeType.html">runtimeType</a></span>
+  <span class="signature">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/Type-class.html">Type</a></span>
+  
+
+</dt>
+<dd class="inherited">
+  A representation of the runtime type of the object.
+  <div class="features"><span class="feature">no setter</span><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="selectedCellPosition" class="property">
+  <span class="name"><a href="../game_cell_manager/CellManager/selectedCellPosition.html">selectedCellPosition</a></span>
+  <span class="signature">&#8596; <a href="https://api.flutter.dev/flutter/dart-math/Point-class.html">Point</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>&gt;</span>?</span>
+  
+
+</dt>
+<dd>
+  The currently selected cell's grid position, or null if none is selected.
+  <div class="features"><span class="feature">getter/setter pair</span></div>
+
+</dd>
+
+        <dt id="world" class="property">
+  <span class="name"><a href="../game_cell_manager/CellManager/world.html">world</a></span>
+  <span class="signature">&#8594; <a href="../game_inf_matrix_world/InfMatrixWorld-class.html">InfMatrixWorld</a></span>
+  
+
+</dt>
+<dd>
+  The infinite matrix world where cell components are placed.
+  <div class="features"><span class="feature">final</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+
+    
+  <section
+      class="summary offset-anchor"
+      id="instance-methods">
+    <h2>Methods</h2>
+    <dl class="callables">
+        <dt id="addCellComponent" class="callable">
+  <span class="name"><a href="../game_cell_manager/CellManager/addCellComponent.html">addCellComponent</a></span><span class="signature">(<wbr><span class="parameter" id="addCellComponent-param-gridPos"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-math/Point-class.html">Point</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>&gt;</span></span> <span class="parameter-name">gridPos</span>, </span><span class="parameter" id="addCellComponent-param-type"><span class="type-annotation"><a href="../logic_board/TileType.html">TileType</a></span> <span class="parameter-name">type</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Adds a <a href="../game_components_cell_component/CellComponent-class.html">CellComponent</a> at the given <code>gridPos</code> with the specified <code>type</code>.
+  
+
+</dd>
+
+        <dt id="clearAllCellComponents" class="callable">
+  <span class="name"><a href="../game_cell_manager/CellManager/clearAllCellComponents.html">clearAllCellComponents</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Removes all cell components from the world and clears the map.
+  
+
+</dd>
+
+        <dt id="handleTileTap" class="callable">
+  <span class="name"><a href="../game_cell_manager/CellManager/handleTileTap.html">handleTileTap</a></span><span class="signature">(<wbr><span class="parameter" id="handleTileTap-param-tappedGridPosition"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-math/Point-class.html">Point</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>&gt;</span></span> <span class="parameter-name">tappedGridPosition</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Handles a tap event on a cell at <code>tappedGridPosition</code>.
+  
+
+</dd>
+
+        <dt id="initializeBoardView" class="callable">
+  <span class="name"><a href="../game_cell_manager/CellManager/initializeBoardView.html">initializeBoardView</a></span><span class="signature">(<wbr><span class="parameter" id="initializeBoardView-param-board"><span class="type-annotation"><a href="../logic_board/Board-class.html">Board</a></span> <span class="parameter-name">board</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Initializes the board view by adding cell components for all frontier and claimed tiles.
+  
+
+</dd>
+
+        <dt id="noSuchMethod" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/noSuchMethod.html">noSuchMethod</a></span><span class="signature">(<wbr><span class="parameter" id="noSuchMethod-param-invocation"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Invocation-class.html">Invocation</a></span> <span class="parameter-name">invocation</span></span>)
+    <span class="returntype parameter">&#8594; dynamic</span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  Invoked when a nonexistent method or property is accessed.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="selectCell" class="callable">
+  <span class="name"><a href="../game_cell_manager/CellManager/selectCell.html">selectCell</a></span><span class="signature">(<wbr><span class="parameter" id="selectCell-param-tappedGridPosition"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-math/Point-class.html">Point</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>&gt;</span></span> <span class="parameter-name">tappedGridPosition</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Selects the cell at <code>tappedGridPosition</code>.
+  
+
+</dd>
+
+        <dt id="toString" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/toString.html">toString</a></span><span class="signature">(<wbr>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/String-class.html">String</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  A string representation of this object.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+        <dt id="updateCellComponent" class="callable">
+  <span class="name"><a href="../game_cell_manager/CellManager/updateCellComponent.html">updateCellComponent</a></span><span class="signature">(<wbr><span class="parameter" id="updateCellComponent-param-gridPos"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-math/Point-class.html">Point</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.flutter.dev/flutter/dart-core/int-class.html">int</a></span>&gt;</span></span> <span class="parameter-name">gridPos</span>, </span><span class="parameter" id="updateCellComponent-param-newType"><span class="type-annotation"><a href="../logic_board/TileType.html">TileType</a></span> <span class="parameter-name">newType</span></span>)
+    <span class="returntype parameter">&#8594; void</span>
+  </span>
+  
+
+</dt>
+<dd>
+  Updates the <a href="../game_components_cell_component/CellComponent-class.html">CellComponent</a> at <code>gridPos</code> to <code>newType</code>, or adds it if missing.
+  
+
+</dd>
+
+    </dl>
+  </section>
+    
+  <section
+      class="summary offset-anchor inherited"
+      id="operators">
+    <h2>Operators</h2>
+    <dl class="callables">
+        <dt id="operator ==" class="callable inherited">
+  <span class="name"><a href="https://api.flutter.dev/flutter/dart-core/Object/operator_equals.html">operator ==</a></span><span class="signature">(<wbr><span class="parameter" id="==-param-other"><span class="type-annotation"><a href="https://api.flutter.dev/flutter/dart-core/Object-class.html">Object</a></span> <span class="parameter-name">other</span></span>)
+    <span class="returntype parameter">&#8594; <a href="https://api.flutter.dev/flutter/dart-core/bool-class.html">bool</a></span>
+  </span>
+  
+
+</dt>
+<dd class="inherited">
+  The equality operator.
+  <div class="features"><span class="feature">inherited</span></div>
+
+</dd>
+
+    </dl>
+  </section>
+    
+    
+    
+
+  </div> <!-- /.main-content -->
+  <div id="dartdoc-sidebar-left" class="sidebar sidebar-offcanvas-left">
+    <!-- The search input and breadcrumbs below are only responsively visible at low resolutions. -->
+<header id="header-search-sidebar" class="hidden-l">
+  <form class="search-sidebar" role="search">
+    <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+<ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+    <li><a href="../index.html">game2</a></li>
+    <li><a href="../game_cell_manager/">cell_manager</a></li>
+    <li class="self-crumb">CellManager class</li>
+</ol>
+
+    <h5>cell_manager library</h5>
+    <div id="dartdoc-sidebar-left-content"></div>
+  </div>
+  <div id="dartdoc-sidebar-right" class="sidebar sidebar-offcanvas-right">
+  </div><!--/.sidebar-offcanvas-->
+</main>
+<footer>
+  <span class="no-break">
+    game2
+      0.1.0
+  </span>
+  
+</footer>
+
+
+<script src="../static-assets/highlight.pack.js?v1"></script>
+<script src="../static-assets/docs.dart.js"></script>
+
+</body>
+</html>
+
