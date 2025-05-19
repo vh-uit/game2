@@ -3,6 +3,7 @@ import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:game2/config.dart';
 import 'package:game2/logic/board.dart';
 import 'package:game2/game/components/cell_component.dart';
 import 'dart:math' as math_dart;
@@ -55,6 +56,8 @@ class InfinityNumberMatrixGame extends FlameGame
   }
 
   /// Attempts to claim a tile at the selected position with the given number.
+  void attemptClaimTile(int number) => _attemptClaimTile(number);
+
   void _attemptClaimTile(int number) {
     if (_selectedCellPosition == null) return;
     final result = board.claimFrontierTile(_selectedCellPosition!, number);
@@ -63,7 +66,10 @@ class InfinityNumberMatrixGame extends FlameGame
       for (final frontier in result['addedFrontier'] as List<math_dart.Point<int>>) {
         _updateCellComponent(frontier, TileType.frontier);
       }
-      print(board.findChainsWithSum(_selectedCellPosition!, 20));
+      final chains = board.findChainsWithSum(_selectedCellPosition!, 20);
+      if (chains.isNotEmpty) {
+        animateChainsHighlight(chains);
+      }
     }
   }
 
@@ -86,15 +92,14 @@ class InfinityNumberMatrixGame extends FlameGame
   }
 
   void clampZoom(double zoomDelta) {
-    double newZoom = camera.viewfinder.zoom + zoomDelta;
-    camera.viewfinder.zoom = newZoom.clamp(0.5, 3.0);
+    camera.viewfinder.zoom = zoomDelta.clamp(0.5, 3.0);
   }
 
   static const zoomPerScrollUnit = .3;
 
   @override
   void onScroll(PointerScrollInfo info) {
-    clampZoom(info.scrollDelta.global.y.sign * zoomPerScrollUnit);
+    clampZoom(camera.viewfinder.zoom + info.scrollDelta.global.y.sign * zoomPerScrollUnit);
   }
 
   late double startZoom;
@@ -102,15 +107,15 @@ class InfinityNumberMatrixGame extends FlameGame
   @override
   void onScaleStart(_) {
     startZoom = camera.viewfinder.zoom;
+    
   }
 
   @override
   void onScaleUpdate(ScaleUpdateInfo info) {
     final currentScale = info.scale.global;
-    print("Scale: $currentScale");
-    print("Zoom level: ${camera.viewfinder.zoom}");
+    
     if (!currentScale.isIdentity()) {
-      clampZoom(startZoom * currentScale.y);
+      clampZoom((currentScale.y)*startZoom);
     } else {
       final delta = info.delta.global;
       camera.moveBy(-delta);
@@ -140,5 +145,36 @@ class InfinityNumberMatrixGame extends FlameGame
       }
     }
     return KeyEventResult.handled;
+  }
+
+  /// Animates (highlights) the given list of points, one after another, each for 0.7s.
+  Future<void> animateChainHighlight(List<math_dart.Point<int>> points, Duration duration) async {
+    for (final point in points) {
+      final cell = _cellComponents[point];
+      if (cell != null) {
+        await cell.highlight(duration: duration, nth: points.indexOf(point).toDouble());
+      }
+    }
+  }
+
+  /// Animates (highlights) all chains in parallel, each cell for 0.7s.
+  Future<void> animateChainsHighlight(List<List<math_dart.Point<int>>> chains) async {
+    final futures1 = <Future>[];
+    for (final chain in chains) {
+      futures1.add(animateChainHighlight(chain, const Duration(milliseconds: 700)));
+    }
+    await Future.wait(futures1);
+    final allPoints = <math_dart.Point<int>>{};
+    for (final chain in chains) {
+      allPoints.addAll(chain);
+    }
+    final futures = <Future>[];
+    for (final point in allPoints) {
+      final cell = _cellComponents[point];
+      if (cell != null) {
+        futures.add(cell.highlight(duration: const Duration(milliseconds: 700), nth: 1, color: highlight2Color.color));
+      }
+    }
+    await Future.wait(futures);
   }
 }

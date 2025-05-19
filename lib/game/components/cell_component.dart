@@ -12,16 +12,24 @@ class CellComponent extends PositionComponent with TapCallbacks {
   TileType type;
   final InfinityNumberMatrixGame gameRef;
   int value = 0; 
-  bool isSelected = false;
+  bool _isSelected = false;
+  bool get isSelected => _isSelected;
+  set isSelected(bool value) {
+    if (_isSelected != value) {
+      _isSelected = value;
+      _updatePaint();
+    }
+  }
   late Paint _paint;
+  late Paint _borderPaint;
 
-  // Remove value parameter from constructor, always use explicit setter for value.
   CellComponent({
     required this.gridPosition,
     required this.type,
     required this.gameRef,
-    this.isSelected = false,
-  }) : super(
+    bool isSelected = false,
+  }) : _isSelected = isSelected,
+        super(
           position: Vector2(
             gridPosition.x * (cellSize + cellMargin),
             gridPosition.y * (cellSize + cellMargin),
@@ -31,7 +39,6 @@ class CellComponent extends PositionComponent with TapCallbacks {
     _updatePaint();
   }
 
-  // Remove value from _updatePaint, only add TextComponent if type is claimed and value != 0
   void _updatePaint() {
     switch (type) {
       case TileType.claimed:
@@ -54,23 +61,26 @@ class CellComponent extends PositionComponent with TapCallbacks {
         break;
       case TileType.frontier:
         _paint = frontierColor.paint();
+        if (isSelected) {
+          _paint.color = Color.alphaBlend(frontierColor.color.withAlpha(600), highlight2Color.color.withAlpha(50));
+        }
         break;
       case TileType.empty:
         _paint = emptyColor.paint(); 
         break;
     }
+
+    _borderPaint = Paint()
+      ..color = isSelected && type == TileType.frontier ? frontierColor.color.withAlpha(150) : defaultBorderColor.color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.0;
   }
 
   @override
   void render(Canvas canvas) {
     super.render(canvas);
     canvas.drawRect(size.toRect(), _paint);
-
-    final borderPaint = Paint()
-      ..color = isSelected ? frontierColor.color.withAlpha(150) : defaultBorderColor.color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.0;
-    canvas.drawRect(size.toRect().deflate(1.5), borderPaint);
+    canvas.drawRect(size.toRect().deflate(1.5), _borderPaint);
   }
 
   @override
@@ -86,13 +96,23 @@ class CellComponent extends PositionComponent with TapCallbacks {
   void updateType(TileType newType) {
     if (type != newType) {
       type = newType;
-      _updatePaint();
     }
   }
 
-  /// Atomically set the value and type of the cell, and update paint.
   void setValueAndType(int newValue, TileType newType) {
     value = newValue;
     updateType(newType);
+    _updatePaint();
+  }
+
+  Future<void> highlight({Duration duration = const Duration(milliseconds: 700), double nth = 1, Color? color }) async {
+    int alpha = (255 ~/ (nth + 1)).clamp(30, 255);
+    _paint = Paint()..color = color?.withAlpha(alpha) ?? highlight1Color.color.withAlpha(alpha);
+    _borderPaint = Paint()
+      ..color = defaultBorderColor.color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.0;
+    await Future.delayed(duration);
+    _updatePaint();
   }
 }
