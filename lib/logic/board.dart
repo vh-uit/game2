@@ -139,4 +139,14 @@ class Board {
   void nextPlayer() {
     _currentPlayerIndex = (_currentPlayerIndex + 1) % _players.length;
   }
+
+  void reset() {
+    _tiles.clear();
+    _frontier.clear();
+    _frontier.add(const Point(0, 0));
+    _currentPlayerIndex = 0;
+    for (final player in _players) {
+      player.reset();
+    }
+  }
 }

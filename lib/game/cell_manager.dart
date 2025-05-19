@@ -95,4 +95,12 @@ class CellManager {
   void handleTileTap(math_dart.Point<int> tappedGridPosition) {
     selectCell(tappedGridPosition);
   }
+
+  /// Removes all cell components from the world and clears the map.
+  void clearAllCellComponents() {
+    for (final component in _cellComponents.values) {
+      component.removeFromParent();
+    }
+    _cellComponents.clear();
+  }
 }

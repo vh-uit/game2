@@ -6,7 +6,6 @@ import 'package:flame/events.dart';
 import 'package:flutter/services.dart';
 import 'package:game2/config.dart';
 import 'package:game2/logic/board.dart';
-import 'package:game2/game/game.dart';
 import 'cell_manager.dart';
 import 'dart:math' as math_dart;
 import 'package:flutter/foundation.dart';
@@ -16,7 +15,7 @@ class InfMatrixWorld extends World {
   late Board board;
 
   /// Manages cell components within this world.
-  late final CellManager cellManager;
+  late CellManager cellManager;
 
   /// The initial zoom level for the world view.
   late double startZoom;
@@ -33,12 +32,19 @@ class InfMatrixWorld extends World {
     await super.onLoad();
     board = await compute(_createBoardInIsolate, null);
     cellManager = CellManager(this);
-    cellManager.selectedCellPosition = null;
-    cellManager.initializeBoardView(board);
     final game = findGame();
     game?.overlays.add('NumSelector');
     game?.overlays.add('PlayerScore');
     game?.overlays.add('SettingsIcon');
+    await reset();
+  }
+
+  Future<void> reset() async {
+    cellManager.clearAllCellComponents();
+    board.reset();
+    cellManager.initializeBoardView(board);
+    cellManager.selectedCellPosition = null;
+    scoreNotifier.value = board.currentPlayer.score;
   }
 
   /// Creates a new [Board] in an isolate.

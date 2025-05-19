@@ -45,4 +45,9 @@ class Player {
   String toString() {
     return 'Player{name: $name, score: $score, remainingPoints: $remainingPoints}';
   }
+
+  void reset() {
+    score = 0;
+    remainingPoints = 100;
+  }
 }
