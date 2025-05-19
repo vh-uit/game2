@@ -8,11 +8,20 @@ enum TileType {
   empty, // Represents a space not yet frontier or claimed
 }
 
+/// Represents a tile on the board, including its value and owning player.
+class TileData {
+  /// The value assigned to this tile.
+  final int value;
+  /// The id of the player who owns this tile.
+  final int playerId;
+  TileData({required this.value, required this.playerId});
+}
+
 /// Represents the game board, including claimed tiles, frontier tiles, and player management.
 ///
 /// Provides methods for claiming tiles, finding chains, and querying tile types.
 class Board {
-  final Map<Point<int>, int> _tiles = {};
+  final Map<Point<int>, TileData> _tiles = {};
   final Set<Point<int>> _frontier = {};
   late final List<Player> _players;
 
@@ -23,6 +32,20 @@ class Board {
       playerNumber,
       (index) => Player(name: 'Player ${index + 1}'),
     );
+  }
+
+  /// The index of the current player whose turn it is.
+  int _currentPlayerIndex = 0;
+
+  /// Returns the current player.
+  Player get currentPlayer => _players[_currentPlayerIndex];
+
+  /// Returns the index of the current player.
+  int get currentPlayerIndex => _currentPlayerIndex;
+
+  /// Advances to the next player in turn order.
+  void nextPlayer() {
+    _currentPlayerIndex = (_currentPlayerIndex + 1) % _players.length;
   }
 
   /// Returns a list of direct orthogonal neighbors for a given tile coordinate.
@@ -40,22 +63,20 @@ class Board {
     return neighbors;
   }
 
-  /// Claims a frontier tile, updates tiles and frontier sets,
+  /// Claims a frontier tile for the current player, updates tiles and frontier sets,
   /// and returns a map with the new frontier and newly claimed tile positions.
   ///
-  /// Returns a map with keys:
-  ///   - 'addedFrontier': [Point<int>, ...], the new frontier tiles created
-  ///   - 'claimedTile': Point<int>, the tile that was just claimed
+  /// Automatically advances to the next player after a successful claim.
   Map<String, dynamic> claimFrontierTile(Point<int> tileToClaim, int value) {
-    print("Attempting to claim tile: $tileToClaim with value: $value");
+    final playerId = currentPlayerIndex;
+    print("Attempting to claim tile: $tileToClaim with value: $value by player: $playerId");
     if (!_frontier.contains(tileToClaim)) {
       print("Error: Tile $tileToClaim is not a frontier tile.");
       return {'addedFrontier': <Point<int>>[], 'claimedTile': null};
     }
-
-    _claimTile(tileToClaim, value);
+    _claimTile(tileToClaim, value, playerId);
     final newlyAddedFrontier = _addNewFrontier(tileToClaim);
-
+    nextPlayer();
     return {'addedFrontier': newlyAddedFrontier, 'claimedTile': tileToClaim};
   }
 
@@ -80,17 +101,14 @@ class Board {
   ) {
     // Avoid revisiting the same tile in the same path
     if (path.contains(current)) return;
-
-    int value = _tiles[current]!;
+    int value = _tiles[current]!.value;
     int newSum = currentSum + value;
     List<Point<int>> newPath = List.from(path)..add(current);
-
     if (newSum == targetSum) {
       result.add(newPath);
       // Do not return; allow for longer chains that also sum to targetSum
     }
     if (newSum > targetSum) return;
-
     for (final neighbor in _getPotentialNeighbors(current)) {
       if (_tiles.containsKey(neighbor) && !newPath.contains(neighbor)) {
         _dfs(neighbor, targetSum, newPath, newSum, result, globalVisited);
@@ -98,9 +116,9 @@ class Board {
     }
   }
 
-  void _claimTile(Point<int> tile, int value) {
+  void _claimTile(Point<int> tile, int value, int playerId) {
     _frontier.remove(tile);
-    _tiles[tile] = value;
+    _tiles[tile] = TileData(value: value, playerId: playerId);
   }
 
   List<Point<int>> _addNewFrontier(Point<int> tile) {
@@ -129,5 +147,15 @@ class Board {
       return TileType.frontier;
     }
     return TileType.empty;
+  }
+
+  /// Gets the player id for a claimed tile, or null if not claimed.
+  int? getTileOwner(Point<int> point) {
+    return _tiles[point]?.playerId;
+  }
+
+  /// Gets the value for a claimed tile, or null if not claimed.
+  int? getTileValue(Point<int> point) {
+    return _tiles[point]?.value;
   }
 }
