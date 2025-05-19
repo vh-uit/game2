@@ -1,5 +1,6 @@
-// lib/logic/board.dart
 import 'dart:math';
+
+import 'package:game2/logic/player.dart';
 
 enum TileType {
   claimed,
@@ -8,12 +9,14 @@ enum TileType {
 }
 
 class Board {
-  final Map<Point<int>, int> _tiles = {}; // Tiles that are part of the main structure
-  final Set<Point<int>> _frontier = {}; // Tiles that can be claimed next
+  final Map<Point<int>, int> _tiles = {};
+  final Set<Point<int>> _frontier = {};
+  late final List<Player> _players;
 
-  Board() {
+  Board({int playerNumber = 1}) {
     // Start with one frontier tile at the origin
     _frontier.add(const Point(0, 0));
+    _players = List.generate(playerNumber, (index) => Player(name: 'Player ${index + 1}'));
   }
 
   /// Returns a list of direct orthogonal neighbors for a given tile coordinate.

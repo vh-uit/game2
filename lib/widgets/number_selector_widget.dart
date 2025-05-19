@@ -50,18 +50,14 @@ class NumSelectorWidget extends StatelessWidget {
                               ),
                               backgroundColor: Colors.amber[200],
                               foregroundColor: Colors.brown[900],
-                              elevation: 0, // Flatter look
-                              padding: EdgeInsets.zero, // Remove default padding
+                              elevation: 2,
                             ),
                             onPressed: () => onNumberSelected(numberValue),
-                            child: Center(
-                              child: Text(
-                                '$numberValue',
-                                style: TextStyle(
-                                  fontSize: fontSize,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                textAlign: TextAlign.center,
+                            child: Text(
+                              '$numberValue',
+                              style: TextStyle(
+                                fontSize: fontSize,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                           ),

@@ -4,11 +4,21 @@ import 'package:flutter/material.dart';
 
 typedef NumberSelectedCallback = void Function(int number);
 
+/// A horizontal row of number buttons (0-9) for number selection in the game.
+///
+/// This component displays a row of buttons, each representing a digit from 0 to 9.
+/// When a button is tapped, the [onNumberSelected] callback is triggered with the selected number.
+/// The appearance of the buttons can be customized via [buttonSize], [spacing], [borderRadius], and [fontSize].
 class NumSelectorComponent extends PositionComponent with HasGameReference {
+  /// Called when a number button is selected.
   final NumberSelectedCallback onNumberSelected;
+  /// The size (width and height) of each button.
   final double buttonSize;
+  /// The horizontal spacing between buttons.
   final double spacing;
+  /// The border radius for button corners.
   final double borderRadius;
+  /// The font size for the number text.
   final double fontSize;
 
   NumSelectorComponent({
@@ -42,10 +52,17 @@ class NumSelectorComponent extends PositionComponent with HasGameReference {
   }
 }
 
+/// A single number button used within [NumSelectorComponent].
+///
+/// Renders a rounded rectangle with a number centered inside. Handles tap events.
 class _NumberButton extends PositionComponent with TapCallbacks {
+  /// The number displayed on the button.
   final int number;
+  /// Called when the button is pressed.
   final VoidCallback onPressed;
+  /// The border radius for the button.
   final double borderRadius;
+  /// The font size for the number text.
   final double fontSize;
 
   _NumberButton({

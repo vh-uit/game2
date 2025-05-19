@@ -18,10 +18,6 @@ class InfMatrixWorld extends World  {
   InfMatrixWorld({required this.scoreNotifier});
 
   @override
-  bool get debugMode => true;
-
-
-  @override
   Future<void> onLoad() async {
     await super.onLoad();
     board = await compute(_createBoardInIsolate, null);
@@ -52,13 +48,23 @@ class InfMatrixWorld extends World  {
       final chains = board.findChainsWithSum(cellManager.selectedCellPosition!, 20);
       if (chains.isNotEmpty) {
         animateChainsHighlight(chains);
-        // Increase player score by total cells in all chains
-        int totalCells = chains.fold(0, (sum, chain) => sum + chain.length);
-        player.updateScore(totalCells);
+        player.updateScore(calcScore(chains));
         scoreNotifier.value = player.score;
       }
     }
   }
+
+  int calcScore(List<List<math_dart.Point<int>>> chains) {
+    int score = 0;
+    final uniqueCells = <math_dart.Point<int>>{};
+    for (final chain in chains) {
+      uniqueCells.addAll(chain);
+    }
+    score = uniqueCells.length;
+    print("Score calculated: $score");
+    return score;
+  }
+
 
   // The following input handlers must be called from the parent FlameGame
   void handleScroll(PointerScrollInfo info, CameraComponent camera) {

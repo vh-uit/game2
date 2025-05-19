@@ -18,8 +18,6 @@ class InfinityNumberMatrixGameWithRouter extends FlameGame with ScaleDetector, T
   @override
   Color backgroundColor() => gameBackgroundColor;
 
-  @override
-  bool get debugMode => true;
 
   @override
   Future<void> onLoad() async {
