@@ -1,14 +1,14 @@
 import 'dart:math' as math_dart;
+import 'package:game2/game/inf_matrix_world.dart';
 import 'package:game2/logic/board.dart';
 import 'package:game2/game/components/cell_component.dart';
-import 'infinity_number_matrix_game.dart';
 
 class CellManager {
-  final InfinityNumberMatrixGame game;
+  final InfMatrixWorld world;
   final Map<math_dart.Point<int>, CellComponent> _cellComponents = {};
   math_dart.Point<int>? _selectedCellPosition;
 
-  CellManager(this.game);
+  CellManager(this.world);
 
   Map<math_dart.Point<int>, CellComponent> get cellComponents => _cellComponents;
   math_dart.Point<int>? get selectedCellPosition => _selectedCellPosition;
@@ -17,6 +17,7 @@ class CellManager {
   void initializeBoardView(Board board) {
     for (final point in board.frontier) {
       addCellComponent(point, TileType.frontier);
+      print("Frontier tile added at $point");
     }
     for (final point in board.tiles) {
       addCellComponent(point, TileType.claimed);
@@ -28,10 +29,11 @@ class CellManager {
     final component = CellComponent(
       gridPosition: gridPos,
       type: type,
-      gameRef: game,
+      onTap: handleTileTap,
     );
+    print("Adding cell component at $gridPos with type $type");
     _cellComponents[gridPos] = component;
-    game.world.add(component);
+    world.add(component);
   }
 
   void updateCellComponent(math_dart.Point<int> gridPos, TileType newType) {

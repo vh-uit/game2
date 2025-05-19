@@ -2,7 +2,6 @@
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:game2/game/infinity_number_matrix_game.dart'; // To call back to game
 import 'package:game2/logic/board.dart' show TileType; // Avoid Point ambiguity
 import 'package:game2/config.dart';
 import 'dart:math' as math; // For Point
@@ -10,7 +9,7 @@ import 'dart:math' as math; // For Point
 class CellComponent extends PositionComponent with TapCallbacks {
   final math.Point<int> gridPosition;
   TileType type;
-  final InfinityNumberMatrixGame gameRef;
+  final void Function(math.Point<int>)? onTap;
   int value = 0; 
   bool _isSelected = false;
   bool get isSelected => _isSelected;
@@ -26,7 +25,7 @@ class CellComponent extends PositionComponent with TapCallbacks {
   CellComponent({
     required this.gridPosition,
     required this.type,
-    required this.gameRef,
+    this.onTap,
     bool isSelected = false,
   }) : _isSelected = isSelected,
         super(
@@ -87,7 +86,7 @@ class CellComponent extends PositionComponent with TapCallbacks {
   void onTapDown(TapDownEvent event) {
     if (type == TileType.frontier) {
       print("CellComponent tapped at $gridPosition (Frontier)");
-      gameRef.cellManager.handleTileTap(gridPosition);
+      onTap?.call(gridPosition);
     } else {
       print("CellComponent tapped at $gridPosition (Type: $type) - No action");
     }

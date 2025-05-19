@@ -1,19 +1,125 @@
 import 'package:flame/game.dart';
-import 'package:flutter/material.dart';
-import 'package:game2/game/inf_matrix_world.dart';
+import 'package:flame/events.dart';
+import 'package:flutter/services.dart';
+import '../config.dart';
+import 'screens/main_menu_screen.dart';
+import 'screens/options_screen.dart';
+import 'inf_matrix_world.dart';
+import 'package:flutter/widgets.dart' hide Route;
+import '../widgets/number_selector_widget.dart';
+import 'package:flutter/material.dart' hide Route;
+import '../widgets/player_score_overlay.dart';
 
-class InfinityNumberMatrixGame extends FlameGame {
-  @override
-  late final InfMatrixWorld world = InfMatrixWorld();
+class InfinityNumberMatrixGameWithRouter extends FlameGame with ScaleDetector, TapDetector, KeyboardEvents, ScrollDetector {
+  late final RouterComponent router;
+  final ValueNotifier<int> playerScoreNotifier = ValueNotifier<int>(0);
+
 
   @override
-  Color backgroundColor() => const Color.fromARGB(255, 255, 249, 225);
+  Color backgroundColor() => gameBackgroundColor;
+
+  @override
+  bool get debugMode => true;
 
   @override
   Future<void> onLoad() async {
     await super.onLoad();
-    await add(world);
+    overlays.addEntry(
+      'NumSelector',
+      (context, game) => NumSelectorWidget(
+        onNumberSelected: (number) {
+          attemptClaimTile(number);
+        },
+        buttonSize: 48,
+        spacing: 8,
+        borderRadius: 12,
+        fontSize: 24,
+      ),
+    );
+    overlays.addEntry(
+      'PlayerScore',
+      (context, game) {
+        final world = currentWorld;
+        if (world != null) {
+          return PlayerScoreOverlay(player: world.player, scoreNotifier: playerScoreNotifier);
+        } else {
+          // fallback empty widget
+          return const SizedBox.shrink();
+        }
+      },
+    );
+    router = RouterComponent(
+      initialRoute: 'main_menu',
+      routes: {
+        'main_menu': Route(() => MainMenuScreen(
+              onStart: startGame,
+              onOptions: openOptions,
+            )),
+        'game': WorldRoute(() => InfMatrixWorld(scoreNotifier: playerScoreNotifier)),
+        'options': Route(() => OptionsScreen(
+              onBack: closeOptions,
+            )),
+      },
+    );
+    await add(router);
   }
 
-  void attemptClaimTile(int number) => world.attemptClaimTile(number);
+
+  void startGame() => router.pushNamed('game');
+  void openOptions() => router.pushNamed('options');
+  void closeOptions() => router.pop();
+
+  InfMatrixWorld? get currentWorld {
+    final route = router.currentRoute;
+    if (route.name == 'game') {
+      for (final child in children) {
+        if (child is InfMatrixWorld) return child;
+      }
+    }
+    return null;
+  }
+
+  @override
+  void onScroll(PointerScrollInfo info) {
+    super.onScroll(info);
+    final world = currentWorld;
+    if (world != null) {
+      world.handleScroll(info, camera);
+    }
+  }
+
+  @override
+  void onScaleStart(ScaleStartInfo info) {
+    super.onScaleStart(info);
+    final world = currentWorld;
+    if (world != null) {
+      world.handleScaleStart(camera);
+    }
+  }
+
+  @override
+  void onScaleUpdate(ScaleUpdateInfo info) {
+    super.onScaleUpdate(info);
+    final world = currentWorld;
+    if (world != null) {
+      world.handleScaleUpdate(info, camera);
+    }
+  }
+
+  @override
+  KeyEventResult onKeyEvent(KeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+    final world = currentWorld;
+    if (world != null) {
+      world.handleKeyEvent(event, camera);
+      return KeyEventResult.handled;
+    }
+    return super.onKeyEvent(event, keysPressed);
+  }
+
+  void attemptClaimTile(int number) {
+    final world = currentWorld;
+    if (world != null) {
+      world.attemptClaimTile(number);
+    }
+  }
 }

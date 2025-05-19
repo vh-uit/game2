@@ -1,17 +1,25 @@
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:game2/config.dart';
 import 'package:game2/logic/board.dart';
+import 'package:game2/logic/player.dart';
 import 'cell_manager.dart';
 import 'dart:math' as math_dart;
 import 'package:flutter/foundation.dart';
 
-class InfMatrixWorld extends World {
+class InfMatrixWorld extends World  {
   late Board board;
   late final CellManager cellManager;
   late double startZoom;
+  late Player player;
+  final ValueNotifier<int> scoreNotifier;
+
+  InfMatrixWorld({required this.scoreNotifier});
+
+  @override
+  bool get debugMode => true;
+
 
   @override
   Future<void> onLoad() async {
@@ -20,6 +28,11 @@ class InfMatrixWorld extends World {
     cellManager = CellManager(this);
     cellManager.selectedCellPosition = null;
     cellManager.initializeBoardView(board);
+    player = Player(name: 'Player 1');
+    // Remove NumSelectorComponent from world, use overlay instead
+    final game = findGame();
+    game?.overlays.add('NumSelector');
+    game?.overlays.add('PlayerScore');
   }
 
   static Board _createBoardInIsolate(dynamic _) {
@@ -39,6 +52,10 @@ class InfMatrixWorld extends World {
       final chains = board.findChainsWithSum(cellManager.selectedCellPosition!, 20);
       if (chains.isNotEmpty) {
         animateChainsHighlight(chains);
+        // Increase player score by total cells in all chains
+        int totalCells = chains.fold(0, (sum, chain) => sum + chain.length);
+        player.updateScore(totalCells);
+        scoreNotifier.value = player.score;
       }
     }
   }
