@@ -4,6 +4,7 @@
 ///
 /// See also: [InfMatrixWorld], [CellComponent], [Board].
 library;
+
 // filepath: d:\Workspaces\Projects\FlutterProject\game2\lib\game\cell_manager.dart
 import 'dart:math' as math_dart;
 import 'package:game2/game/inf_matrix_world.dart';
@@ -27,13 +28,15 @@ class CellManager {
   CellManager(this.world);
 
   /// All cell components managed by this instance, keyed by their grid position.
-  Map<math_dart.Point<int>, CellComponent> get cellComponents => _cellComponents;
+  Map<math_dart.Point<int>, CellComponent> get cellComponents =>
+      _cellComponents;
 
   /// The grid position of the currently selected cell, or null if none is selected.
   math_dart.Point<int>? get selectedCellPosition => _selectedCellPosition;
 
   /// Sets the selected cell's grid position.
-  set selectedCellPosition(math_dart.Point<int>? pos) => _selectedCellPosition = pos;
+  set selectedCellPosition(math_dart.Point<int>? pos) =>
+      _selectedCellPosition = pos;
 
   /// Initializes the board view by adding cell components for all frontier and claimed tiles.
   ///

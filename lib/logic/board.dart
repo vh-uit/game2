@@ -19,7 +19,10 @@ class Board {
   Board({int playerNumber = 1}) {
     // Start with one frontier tile at the origin
     _frontier.add(const Point(0, 0));
-    _players = List.generate(playerNumber, (index) => Player(name: 'Player ${index + 1}'));
+    _players = List.generate(
+      playerNumber,
+      (index) => Player(name: 'Player ${index + 1}'),
+    );
   }
 
   /// Returns a list of direct orthogonal neighbors for a given tile coordinate.
@@ -47,19 +50,13 @@ class Board {
     print("Attempting to claim tile: $tileToClaim with value: $value");
     if (!_frontier.contains(tileToClaim)) {
       print("Error: Tile $tileToClaim is not a frontier tile.");
-      return {
-        'addedFrontier': <Point<int>>[],
-        'claimedTile': null,
-      };
+      return {'addedFrontier': <Point<int>>[], 'claimedTile': null};
     }
 
     _claimTile(tileToClaim, value);
     final newlyAddedFrontier = _addNewFrontier(tileToClaim);
 
-    return {
-      'addedFrontier': newlyAddedFrontier,
-      'claimedTile': tileToClaim,
-    };
+    return {'addedFrontier': newlyAddedFrontier, 'claimedTile': tileToClaim};
   }
 
   /// Finds all chains (paths of adjacent claimed tiles) whose values sum to [targetSum].

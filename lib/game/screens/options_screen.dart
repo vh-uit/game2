@@ -33,27 +33,31 @@ class OptionsScreen extends Component {
   @override
   Future<void> onLoad() async {
     await super.onLoad();
-    add(_HudSwitchRow(
-      label: 'Show Number Selector',
-      value: showNumSelector,
-      onChanged: onToggle,
-      position: Vector2(100, 100),
-    ));
-    add(_HudButton(
-      label: 'Restart Game',
-      onPressed: onRestart,
-      position: Vector2(100, 200),
-    ));
-    add(_HudButton(
-      label: 'Quit Game',
-      onPressed: onQuit,
-      position: Vector2(100, 300),
-    ));
-    add(_HudButton(
-      label: 'Back',
-      onPressed: onBack,
-      position: Vector2(100, 400),
-    ));
+    add(
+      _HudSwitchRow(
+        label: 'Show Number Selector',
+        value: showNumSelector,
+        onChanged: onToggle,
+        position: Vector2(100, 100),
+      ),
+    );
+    add(
+      _HudButton(
+        label: 'Restart Game',
+        onPressed: onRestart,
+        position: Vector2(100, 200),
+      ),
+    );
+    add(
+      _HudButton(
+        label: 'Quit Game',
+        onPressed: onQuit,
+        position: Vector2(100, 300),
+      ),
+    );
+    add(
+      _HudButton(label: 'Back', onPressed: onBack, position: Vector2(100, 400)),
+    );
   }
 }
 
@@ -122,10 +126,7 @@ class _HudSwitchRow extends PositionComponent with TapCallbacks {
     final textPainter = TextPainter(
       text: TextSpan(
         text: label,
-        style: TextStyle(
-          color: Colors.brown[900],
-          fontSize: 20,
-        ),
+        style: TextStyle(color: Colors.brown[900], fontSize: 20),
       ),
       textDirection: TextDirection.ltr,
       textAlign: TextAlign.left,
@@ -133,8 +134,7 @@ class _HudSwitchRow extends PositionComponent with TapCallbacks {
     textPainter.paint(canvas, Offset(10, (size.y - textPainter.height) / 2));
     // Draw switch (as a simple rectangle for now)
     final switchRect = Rect.fromLTWH(size.x - 70, 15, 50, 30);
-    final switchPaint = Paint()
-      ..color = value ? Colors.green : Colors.red;
+    final switchPaint = Paint()..color = value ? Colors.green : Colors.red;
     canvas.drawRect(switchRect, switchPaint);
   }
 

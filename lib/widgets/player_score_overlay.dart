@@ -4,7 +4,11 @@ import 'package:game2/logic/player.dart';
 class PlayerScoreOverlay extends StatefulWidget {
   final Player player;
   final ValueNotifier<int> scoreNotifier;
-  const PlayerScoreOverlay({super.key, required this.player, required this.scoreNotifier});
+  const PlayerScoreOverlay({
+    super.key,
+    required this.player,
+    required this.scoreNotifier,
+  });
 
   @override
   State<PlayerScoreOverlay> createState() => _PlayerScoreOverlayState();

@@ -11,7 +11,7 @@ import 'cell_manager.dart';
 import 'dart:math' as math_dart;
 import 'package:flutter/foundation.dart';
 
-class InfMatrixWorld extends World  {
+class InfMatrixWorld extends World {
   /// The logical board for the game.
   late Board board;
 
@@ -56,13 +56,21 @@ class InfMatrixWorld extends World  {
   /// Internal logic for claiming a tile and updating components.
   void _attemptClaimTile(int number) {
     if (cellManager.selectedCellPosition == null) return;
-    final result = board.claimFrontierTile(cellManager.selectedCellPosition!, number);
+    final result = board.claimFrontierTile(
+      cellManager.selectedCellPosition!,
+      number,
+    );
     if (result['claimedTile'] != null) {
-      cellManager.cellComponents[cellManager.selectedCellPosition!]!.setValueAndType(number, TileType.claimed);
-      for (final frontier in result['addedFrontier'] as List<math_dart.Point<int>>) {
+      cellManager.cellComponents[cellManager.selectedCellPosition!]!
+          .setValueAndType(number, TileType.claimed);
+      for (final frontier
+          in result['addedFrontier'] as List<math_dart.Point<int>>) {
         cellManager.updateCellComponent(frontier, TileType.frontier);
       }
-      final chains = board.findChainsWithSum(cellManager.selectedCellPosition!, 20);
+      final chains = board.findChainsWithSum(
+        cellManager.selectedCellPosition!,
+        20,
+      );
       if (chains.isNotEmpty) {
         animateChainsHighlight(chains);
         player.updateScore(calcScore(chains));
@@ -82,10 +90,13 @@ class InfMatrixWorld extends World  {
     return score;
   }
 
-
   // The following input handlers must be called from the parent FlameGame
   void handleScroll(PointerScrollInfo info, CameraComponent camera) {
-    clampZoom(camera.viewfinder.zoom + info.scrollDelta.global.y.sign * zoomPerScrollUnit, camera);
+    clampZoom(
+      camera.viewfinder.zoom +
+          info.scrollDelta.global.y.sign * zoomPerScrollUnit,
+      camera,
+    );
   }
 
   void handleScaleStart(CameraComponent camera) {
@@ -128,19 +139,29 @@ class InfMatrixWorld extends World  {
 
   static const zoomPerScrollUnit = .3;
 
-  Future<void> animateChainHighlight(List<math_dart.Point<int>> points, Duration duration) async {
+  Future<void> animateChainHighlight(
+    List<math_dart.Point<int>> points,
+    Duration duration,
+  ) async {
     for (final point in points) {
       final cell = cellManager.cellComponents[point];
       if (cell != null) {
-        await cell.highlight(duration: duration, nth: points.indexOf(point).toDouble());
+        await cell.highlight(
+          duration: duration,
+          nth: points.indexOf(point).toDouble(),
+        );
       }
     }
   }
 
-  Future<void> animateChainsHighlight(List<List<math_dart.Point<int>>> chains) async {
+  Future<void> animateChainsHighlight(
+    List<List<math_dart.Point<int>>> chains,
+  ) async {
     final futures1 = <Future>[];
     for (final chain in chains) {
-      futures1.add(animateChainHighlight(chain, const Duration(milliseconds: 700)));
+      futures1.add(
+        animateChainHighlight(chain, const Duration(milliseconds: 700)),
+      );
     }
     await Future.wait(futures1);
     final allPoints = <math_dart.Point<int>>{};
@@ -151,7 +172,13 @@ class InfMatrixWorld extends World  {
     for (final point in allPoints) {
       final cell = cellManager.cellComponents[point];
       if (cell != null) {
-        futures.add(cell.highlight(duration: const Duration(milliseconds: 700), nth: 1, color: highlight2Color.color));
+        futures.add(
+          cell.highlight(
+            duration: const Duration(milliseconds: 700),
+            nth: 1,
+            color: highlight2Color.color,
+          ),
+        );
       }
     }
     await Future.wait(futures);

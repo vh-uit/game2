@@ -12,12 +12,16 @@ typedef NumberSelectedCallback = void Function(int number);
 class NumSelectorComponent extends PositionComponent with HasGameReference {
   /// Called when a number button is selected.
   final NumberSelectedCallback onNumberSelected;
+
   /// The size (width and height) of each button.
   final double buttonSize;
+
   /// The horizontal spacing between buttons.
   final double spacing;
+
   /// The border radius for button corners.
   final double borderRadius;
+
   /// The font size for the number text.
   final double fontSize;
 
@@ -30,7 +34,10 @@ class NumSelectorComponent extends PositionComponent with HasGameReference {
     this.fontSize = 24,
     Vector2? position,
     Vector2? size,
-  }) : super(position: position ?? Vector2.zero(), size: size ?? Vector2(600, 80));
+  }) : super(
+         position: position ?? Vector2.zero(),
+         size: size ?? Vector2(600, 80),
+       );
 
   /// Loads the number selector and adds number buttons as children.
   @override
@@ -42,14 +49,16 @@ class NumSelectorComponent extends PositionComponent with HasGameReference {
     final double y = size.y / 2 - buttonSize / 2;
     for (int i = 0; i < numbers.length; i++) {
       final x = i * (buttonSize + spacing) + (size.x - totalWidth) / 2;
-      add(_NumberButton(
-        number: numbers[i],
-        onPressed: () => onNumberSelected(numbers[i]),
-        position: Vector2(x, y),
-        size: Vector2(buttonSize, buttonSize),
-        borderRadius: borderRadius,
-        fontSize: fontSize,
-      ));
+      add(
+        _NumberButton(
+          number: numbers[i],
+          onPressed: () => onNumberSelected(numbers[i]),
+          position: Vector2(x, y),
+          size: Vector2(buttonSize, buttonSize),
+          borderRadius: borderRadius,
+          fontSize: fontSize,
+        ),
+      );
     }
   }
 }
@@ -60,10 +69,13 @@ class NumSelectorComponent extends PositionComponent with HasGameReference {
 class _NumberButton extends PositionComponent with TapCallbacks {
   /// The number displayed on the button.
   final int number;
+
   /// Called when the button is pressed.
   final VoidCallback onPressed;
+
   /// The border radius for the button.
   final double borderRadius;
+
   /// The font size for the number text.
   final double fontSize;
 
@@ -81,10 +93,11 @@ class _NumberButton extends PositionComponent with TapCallbacks {
     final rect = size.toRect();
     final rrect = RRect.fromRectAndRadius(rect, Radius.circular(borderRadius));
     final paint = Paint()..color = Colors.amber[200]!;
-    final borderPaint = Paint()
-      ..color = Colors.brown[900]!
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2;
+    final borderPaint =
+        Paint()
+          ..color = Colors.brown[900]!
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2;
     canvas.drawRRect(rrect, paint);
     canvas.drawRRect(rrect, borderPaint);
     final textPainter = TextPainter(

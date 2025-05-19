@@ -2,6 +2,7 @@
 ///
 /// Handles rendering, selection state, and tap events for a cell at a specific grid position.
 library;
+
 // lib/game/components/cell_component.dart
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
@@ -21,7 +22,7 @@ class CellComponent extends PositionComponent with TapCallbacks {
   final void Function(math.Point<int>)? onTap;
 
   /// The value displayed in this cell (if any).
-  int value = 0; 
+  int value = 0;
 
   bool _isSelected = false;
 
@@ -33,6 +34,7 @@ class CellComponent extends PositionComponent with TapCallbacks {
       _updatePaint();
     }
   }
+
   late Paint _paint;
   late Paint _borderPaint;
 
@@ -42,13 +44,13 @@ class CellComponent extends PositionComponent with TapCallbacks {
     this.onTap,
     bool isSelected = false,
   }) : _isSelected = isSelected,
-        super(
-          position: Vector2(
-            gridPosition.x * (cellSize + cellMargin),
-            gridPosition.y * (cellSize + cellMargin),
-          ),
-          size: Vector2.all(cellSize),
-        ) {
+       super(
+         position: Vector2(
+           gridPosition.x * (cellSize + cellMargin),
+           gridPosition.y * (cellSize + cellMargin),
+         ),
+         size: Vector2.all(cellSize),
+       ) {
     _updatePaint();
   }
 
@@ -58,36 +60,45 @@ class CellComponent extends PositionComponent with TapCallbacks {
       case TileType.claimed:
         _paint = claimedColor.paint();
         if (value != 0) {
-          add(TextComponent(
-            text: value.toString(),
-            position: Vector2(cellSize / 2, cellSize / 2),
-            anchor: Anchor.center,
-            textRenderer: TextPaint(
-              style: TextStyle(
-                fontFamily: 'Roboto',
-                fontWeight: FontWeight.bold,
-                fontSize: cellSize * 0.7,
-                color: CupertinoColors.white,
+          add(
+            TextComponent(
+              text: value.toString(),
+              position: Vector2(cellSize / 2, cellSize / 2),
+              anchor: Anchor.center,
+              textRenderer: TextPaint(
+                style: TextStyle(
+                  fontFamily: 'Roboto',
+                  fontWeight: FontWeight.bold,
+                  fontSize: cellSize * 0.7,
+                  color: CupertinoColors.white,
+                ),
               ),
             ),
-          ));
+          );
         }
         break;
       case TileType.frontier:
         _paint = frontierColor.paint();
         if (isSelected) {
-          _paint.color = Color.alphaBlend(frontierColor.color.withAlpha(600), highlight2Color.color.withAlpha(50));
+          _paint.color = Color.alphaBlend(
+            frontierColor.color.withAlpha(600),
+            highlight2Color.color.withAlpha(50),
+          );
         }
         break;
       case TileType.empty:
-        _paint = emptyColor.paint(); 
+        _paint = emptyColor.paint();
         break;
     }
 
-    _borderPaint = Paint()
-      ..color = isSelected && type == TileType.frontier ? frontierColor.color.withAlpha(150) : defaultBorderColor.color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.0;
+    _borderPaint =
+        Paint()
+          ..color =
+              isSelected && type == TileType.frontier
+                  ? frontierColor.color.withAlpha(150)
+                  : defaultBorderColor.color
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2.0;
   }
 
   @override
@@ -119,13 +130,21 @@ class CellComponent extends PositionComponent with TapCallbacks {
     _updatePaint();
   }
 
-  Future<void> highlight({Duration duration = const Duration(milliseconds: 700), double nth = 1, Color? color }) async {
+  Future<void> highlight({
+    Duration duration = const Duration(milliseconds: 700),
+    double nth = 1,
+    Color? color,
+  }) async {
     int alpha = (255 ~/ (nth + 1)).clamp(30, 255);
-    _paint = Paint()..color = color?.withAlpha(alpha) ?? highlight1Color.color.withAlpha(alpha);
-    _borderPaint = Paint()
-      ..color = defaultBorderColor.color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.0;
+    _paint =
+        Paint()
+          ..color =
+              color?.withAlpha(alpha) ?? highlight1Color.color.withAlpha(alpha);
+    _borderPaint =
+        Paint()
+          ..color = defaultBorderColor.color
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2.0;
     await Future.delayed(duration);
     _updatePaint();
   }
