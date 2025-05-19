@@ -1,19 +1,14 @@
+/// The entry point of the application.
+///
+/// Initializes the game and runs the Flutter app with the [InfinityNumberMatrixGameWithRouter].
+
+import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
-import 'package:game2/game.dart';
+import 'package:flutter/widgets.dart';
+import 'package:game2/game/screens/win_screen.dart';
+import 'game/game.dart';
 
 void main() {
-  runApp(const MainApp());
-}
-
-class MainApp extends StatelessWidget {
-  const MainApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: GameState()
-      ),
-    );
-  }
+  final game = InfinityNumberMatrixGameWithRouter();
+  runApp(GameWidget(game: game));
 }
