@@ -8,6 +8,9 @@ enum TileType {
   empty, // Represents a space not yet frontier or claimed
 }
 
+/// Represents the game board, including claimed tiles, frontier tiles, and player management.
+///
+/// Provides methods for claiming tiles, finding chains, and querying tile types.
 class Board {
   final Map<Point<int>, int> _tiles = {};
   final Set<Point<int>> _frontier = {};
@@ -36,10 +39,10 @@ class Board {
 
   /// Claims a frontier tile, updates tiles and frontier sets,
   /// and returns a map with the new frontier and newly claimed tile positions.
-  /// {
-  ///   'addedFrontier': [Point<int>, ...], // New frontier tiles created
-  ///   'claimedTile': Point<int>          // The tile that was just claimed
-  /// }
+  ///
+  /// Returns a map with keys:
+  ///   - 'addedFrontier': [Point<int>, ...], the new frontier tiles created
+  ///   - 'claimedTile': Point<int>, the tile that was just claimed
   Map<String, dynamic> claimFrontierTile(Point<int> tileToClaim, int value) {
     print("Attempting to claim tile: $tileToClaim with value: $value");
     if (!_frontier.contains(tileToClaim)) {
@@ -60,7 +63,8 @@ class Board {
   }
 
   /// Finds all chains (paths of adjacent claimed tiles) whose values sum to [targetSum].
-  /// Returns a list of chains, where each chain is a list of Point<int>.
+  ///
+  /// Returns a list of chains, where each chain is a list of [Point<int>].
   List<List<Point<int>>> findChainsWithSum(Point<int> start, int targetSum) {
     List<List<Point<int>>> result = [];
     Set<Point<int>> visited = {};

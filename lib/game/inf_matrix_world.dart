@@ -1,3 +1,6 @@
+/// A world representing the infinite number matrix game board.
+///
+/// Manages the board state, cell components, player, and score updates.
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flutter/services.dart';
@@ -9,14 +12,25 @@ import 'dart:math' as math_dart;
 import 'package:flutter/foundation.dart';
 
 class InfMatrixWorld extends World  {
+  /// The logical board for the game.
   late Board board;
+
+  /// Manages cell components within this world.
   late final CellManager cellManager;
+
+  /// The initial zoom level for the world view.
   late double startZoom;
+
+  /// The player currently in this world.
   late Player player;
+
+  /// Notifies listeners of score changes.
   final ValueNotifier<int> scoreNotifier;
 
+  /// Creates an [InfMatrixWorld] with the given [scoreNotifier].
   InfMatrixWorld({required this.scoreNotifier});
 
+  /// Loads the board, cell manager, and player, and sets up overlays.
   @override
   Future<void> onLoad() async {
     await super.onLoad();
@@ -31,12 +45,15 @@ class InfMatrixWorld extends World  {
     game?.overlays.add('PlayerScore');
   }
 
+  /// Creates a new [Board] in an isolate.
   static Board _createBoardInIsolate(dynamic _) {
     return Board();
   }
 
+  /// Attempts to claim a tile with the given [number].
   void attemptClaimTile(int number) => _attemptClaimTile(number);
 
+  /// Internal logic for claiming a tile and updating components.
   void _attemptClaimTile(int number) {
     if (cellManager.selectedCellPosition == null) return;
     final result = board.claimFrontierTile(cellManager.selectedCellPosition!, number);

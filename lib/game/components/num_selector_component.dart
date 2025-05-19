@@ -21,6 +21,7 @@ class NumSelectorComponent extends PositionComponent with HasGameReference {
   /// The font size for the number text.
   final double fontSize;
 
+  /// Creates a [NumSelectorComponent] with customizable appearance and callback.
   NumSelectorComponent({
     required this.onNumberSelected,
     this.buttonSize = 56,
@@ -31,6 +32,7 @@ class NumSelectorComponent extends PositionComponent with HasGameReference {
     Vector2? size,
   }) : super(position: position ?? Vector2.zero(), size: size ?? Vector2(600, 80));
 
+  /// Loads the number selector and adds number buttons as children.
   @override
   Future<void> onLoad() async {
     await super.onLoad();

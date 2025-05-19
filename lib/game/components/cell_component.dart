@@ -1,3 +1,7 @@
+/// Represents a single cell in the game grid.
+///
+/// Handles rendering, selection state, and tap events for a cell at a specific grid position.
+library;
 // lib/game/components/cell_component.dart
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
@@ -7,11 +11,21 @@ import 'package:game2/config.dart';
 import 'dart:math' as math; // For Point
 
 class CellComponent extends PositionComponent with TapCallbacks {
+  /// The grid position of this cell.
   final math.Point<int> gridPosition;
+
+  /// The type of this cell (e.g., claimed, frontier).
   TileType type;
+
+  /// Callback when this cell is tapped.
   final void Function(math.Point<int>)? onTap;
+
+  /// The value displayed in this cell (if any).
   int value = 0; 
+
   bool _isSelected = false;
+
+  /// Whether this cell is currently selected.
   bool get isSelected => _isSelected;
   set isSelected(bool value) {
     if (_isSelected != value) {
@@ -38,6 +52,7 @@ class CellComponent extends PositionComponent with TapCallbacks {
     _updatePaint();
   }
 
+  /// Updates the paint and text for this cell based on its type and value.
   void _updatePaint() {
     switch (type) {
       case TileType.claimed:

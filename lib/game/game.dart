@@ -10,15 +10,23 @@ import '../widgets/number_selector_widget.dart';
 import 'package:flutter/material.dart' hide Route;
 import '../widgets/player_score_overlay.dart';
 
+/// The main game class for Infinity Number Matrix.
+///
+/// Handles routing, overlays, and game state management using Flame and Flutter widgets.
 class InfinityNumberMatrixGameWithRouter extends FlameGame with ScaleDetector, TapDetector, KeyboardEvents, ScrollDetector {
+  /// The router component for managing navigation between screens.
   late final RouterComponent router;
+
+  /// Notifies listeners of the player's score changes.
   final ValueNotifier<int> playerScoreNotifier = ValueNotifier<int>(0);
 
 
+  /// Returns the background color for the game.
   @override
   Color backgroundColor() => gameBackgroundColor;
 
 
+  /// Loads overlays and initializes the router.
   @override
   Future<void> onLoad() async {
     await super.onLoad();

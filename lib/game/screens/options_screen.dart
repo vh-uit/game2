@@ -2,11 +2,23 @@ import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flutter/material.dart';
 
+/// The options screen for the game.
+///
+/// Provides toggles and buttons for game options such as showing the number selector, restarting, quitting, or going back.
 class OptionsScreen extends Component {
+  /// Whether the number selector should be shown.
   final bool showNumSelector;
+
+  /// Callback when the number selector toggle is changed.
   final ValueChanged<bool>? onToggle;
+
+  /// Callback when the restart button is pressed.
   final void Function()? onRestart;
+
+  /// Callback when the quit button is pressed.
   final void Function()? onQuit;
+
+  /// Callback when the back button is pressed.
   final void Function()? onBack;
 
   OptionsScreen({
@@ -17,6 +29,7 @@ class OptionsScreen extends Component {
     this.onBack,
   });
 
+  /// Loads the options screen and adds option controls as children.
   @override
   Future<void> onLoad() async {
     await super.onLoad();

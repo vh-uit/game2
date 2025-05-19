@@ -2,12 +2,19 @@ import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flutter/material.dart';
 
+/// The main menu screen for the game.
+///
+/// Provides buttons to start the game or open the options screen.
 class MainMenuScreen extends Component {
+  /// Callback when the start button is pressed.
   final void Function()? onStart;
+
+  /// Callback when the options button is pressed.
   final void Function()? onOptions;
 
   MainMenuScreen({this.onStart, this.onOptions});
 
+  /// Loads the main menu and adds menu buttons as children.
   @override
   Future<void> onLoad() async {
     await super.onLoad();
