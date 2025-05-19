@@ -14,6 +14,7 @@ class InfMatrixWorld extends World {
   /// The logical board for the game.
   late Board board;
 
+
   /// Manages cell components within this world.
   late CellManager cellManager;
 
@@ -30,7 +31,7 @@ class InfMatrixWorld extends World {
   @override
   Future<void> onLoad() async {
     await super.onLoad();
-    board = await compute(_createBoardInIsolate, null);
+    board = Board();
     cellManager = CellManager(this);
     final game = findGame();
     game?.overlays.add('NumSelectorBottom');
@@ -40,16 +41,10 @@ class InfMatrixWorld extends World {
   }
 
   Future<void> reset() async {
-    cellManager.clearAllCellComponents();
     board.reset();
     cellManager.initializeBoardView(board);
     cellManager.selectedCellPosition = null;
     scoreNotifier.value = board.currentPlayer.score;
-  }
-
-  /// Creates a new [Board] in an isolate.
-  static Board _createBoardInIsolate(dynamic _) {
-    return Board();
   }
 
   /// Attempts to claim a tile with the given [number].

@@ -7,6 +7,7 @@ library;
 
 // filepath: d:\Workspaces\Projects\FlutterProject\game2\lib\game\cell_manager.dart
 import 'dart:math' as math_dart;
+import 'package:flame/components.dart';
 import 'package:game2/game/inf_matrix_world.dart';
 import 'package:game2/logic/board.dart';
 import 'package:game2/game/components/cell_component.dart';
@@ -22,7 +23,7 @@ class CellManager {
   final Map<math_dart.Point<int>, CellComponent> _cellComponents = {};
 
   /// The currently selected cell's grid position, or null if none is selected.
-  math_dart.Point<int>? _selectedCellPosition;
+  math_dart.Point<int>? selectedCellPosition;
 
   /// Creates a [CellManager] for the given [world].
   CellManager(this.world);
@@ -31,20 +32,13 @@ class CellManager {
   Map<math_dart.Point<int>, CellComponent> get cellComponents =>
       _cellComponents;
 
-  /// The grid position of the currently selected cell, or null if none is selected.
-  math_dart.Point<int>? get selectedCellPosition => _selectedCellPosition;
-
-  /// Sets the selected cell's grid position.
-  set selectedCellPosition(math_dart.Point<int>? pos) =>
-      _selectedCellPosition = pos;
-
   /// Initializes the board view by adding cell components for all frontier and claimed tiles.
   ///
   /// [board] is the current game board whose tiles will be visualized.
   void initializeBoardView(Board board) {
+    clearAllCellComponents();
     for (final point in board.frontier) {
       addCellComponent(point, TileType.frontier);
-      print("Frontier tile added at $point");
     }
     for (final point in board.tiles) {
       addCellComponent(point, TileType.claimed);
@@ -61,9 +55,19 @@ class CellManager {
       type: type,
       onTap: handleTileTap,
     );
+    
     print("Adding cell component at $gridPos with type $type");
     _cellComponents[gridPos] = component;
     world.add(component);
+    print("Added cell component at $gridPos with type $type");
+    world.add(PositionComponent(
+      position: Vector2(
+        100.0,
+        100.0,
+      ),
+      size: Vector2.all(100.0),
+      anchor: Anchor.center,  
+    ));
   }
 
   /// Updates the [CellComponent] at [gridPos] to [newType], or adds it if missing.
@@ -79,15 +83,15 @@ class CellManager {
   ///
   /// Deselects the previously selected cell if necessary.
   void selectCell(math_dart.Point<int> tappedGridPosition) {
-    if (_selectedCellPosition == tappedGridPosition) {
-      _cellComponents[_selectedCellPosition!]!.isSelected = false;
-      _selectedCellPosition = null;
+    if (selectedCellPosition == tappedGridPosition) {
+      _cellComponents[selectedCellPosition!]!.isSelected = false;
+      selectedCellPosition = null;
     } else {
-      if (_selectedCellPosition != null) {
-        _cellComponents[_selectedCellPosition!]!.isSelected = false;
+      if (selectedCellPosition != null) {
+        _cellComponents[selectedCellPosition!]!.isSelected = false;
       }
-      _selectedCellPosition = tappedGridPosition;
-      _cellComponents[_selectedCellPosition!]!.isSelected = true;
+      selectedCellPosition = tappedGridPosition;
+      _cellComponents[selectedCellPosition!]!.isSelected = true;
     }
   }
 

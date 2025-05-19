@@ -111,10 +111,8 @@ class CellComponent extends PositionComponent with TapCallbacks {
   @override
   void onTapDown(TapDownEvent event) {
     if (type == TileType.frontier) {
-      print("CellComponent tapped at $gridPosition (Frontier)");
       onTap?.call(gridPosition);
     } else {
-      print("CellComponent tapped at $gridPosition (Type: $type) - No action");
     }
   }
 

@@ -82,7 +82,6 @@ class RouterManager {
       routes: {
         'main_menu': Route(
           () => MainMenuScreen(onStart: () async {
-            addOverlay('Loading');
             startGame();
           }, onOptions: openOptions),
           maintainState: false,
@@ -95,7 +94,6 @@ class RouterManager {
           onBack: closeOptions,
           onRestart: () {
             closeOptions();
-            addOverlay('Loading');
             startGame(restart: true);
           },
           onQuit: () {
@@ -106,13 +104,8 @@ class RouterManager {
           numSelectorMode: numSelectorMode,
           onModeChanged: onModeChanged,
         )),
-
       },
-
     );
-    game.overlays.addEntry('Loading', (context, game) => const Center(
-      child: CircularProgressIndicator(color: Colors.amber),
-    ));
     setRouter(router);
   }
 }

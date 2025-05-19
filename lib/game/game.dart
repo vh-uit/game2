@@ -42,7 +42,6 @@ class InfinityNumberMatrixGameWithRouter extends FlameGame
       numSelectorMode: numSelectorMode,
       onModeChanged: (mode) {
         numSelectorMode = mode;
-        print('NumSelectorMode changed to: $mode');
         overlays.remove('NumSelectorBottom');
         overlays.remove('NumSelectorTop');
         if (mode == NumSelectorMode.none) {
@@ -65,8 +64,8 @@ class InfinityNumberMatrixGameWithRouter extends FlameGame
       // Remove the current game world if it exists
       gameWorld.reset();
     }
-    router.popUntilNamed('main_menu');
-    router.pushNamed('game');
+    
+    router.pushReplacementNamed('game');
   }
 
   void openOptions() => router.pushNamed('options');
