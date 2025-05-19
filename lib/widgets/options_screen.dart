@@ -2,121 +2,110 @@ import 'package:flutter/material.dart';
 
 enum NumSelectorMode { none, single, double }
 
-class OptionsScreen extends StatelessWidget {
-  final VoidCallback? onBack;
-  final VoidCallback? onRestart;
+class OptionsScreen extends StatefulWidget {
   final VoidCallback? onQuit;
+  final VoidCallback? onRestart;
   final NumSelectorMode numSelectorMode;
   final ValueChanged<NumSelectorMode>? onModeChanged;
+  final VoidCallback? onBack;
 
   const OptionsScreen({
     super.key,
-    this.onBack,
-    this.onRestart,
     this.onQuit,
-    this.numSelectorMode = NumSelectorMode.single,
+    this.onRestart,
+    required this.numSelectorMode,
     this.onModeChanged,
+    this.onBack,
   });
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Options')),
-      body: Center(
-        child: _OptionsBody(
-          onBack: onBack,
-          onRestart: onRestart,
-          onQuit: onQuit,
-          numSelectorMode: numSelectorMode,
-          onModeChanged: onModeChanged,
-        ),
-      ),
-    );
-  }
+  State<OptionsScreen> createState() => _OptionsScreenState();
 }
 
-class _OptionsBody extends StatefulWidget {
-  final VoidCallback? onBack;
-  final VoidCallback? onRestart;
-  final VoidCallback? onQuit;
-  final NumSelectorMode numSelectorMode;
-  final ValueChanged<NumSelectorMode>? onModeChanged;
-  const _OptionsBody({
-    this.onBack,
-    this.onRestart,
-    this.onQuit,
-    this.numSelectorMode = NumSelectorMode.single,
-    this.onModeChanged,
-  });
-
-  @override
-  State<_OptionsBody> createState() => _OptionsBodyState();
-}
-
-class _OptionsBodyState extends State<_OptionsBody> {
-  late NumSelectorMode _mode;
+class _OptionsScreenState extends State<OptionsScreen> {
+  late NumSelectorMode _selectedMode;
 
   @override
   void initState() {
     super.initState();
-    _mode = widget.numSelectorMode;
+    _selectedMode = widget.numSelectorMode;
+  }
+
+  void _onModeChanged(NumSelectorMode mode) {
+    setState(() {
+      _selectedMode = mode;
+    });
+    if (widget.onModeChanged != null) {
+      widget.onModeChanged!(mode);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text('Num Selector Mode'),
-            const SizedBox(width: 16),
-            DropdownButton<NumSelectorMode>(
-              value: _mode,
-              items: const [
-                DropdownMenuItem(
-                  value: NumSelectorMode.none,
-                  child: Text('None'),
-                ),
-                DropdownMenuItem(
-                  value: NumSelectorMode.single,
-                  child: Text('Single'),
-                ),
-                DropdownMenuItem(
-                  value: NumSelectorMode.double,
-                  child: Text('Double'),
-                ),
-              ],
-              onChanged: (val) {
-                if (val != null) {
-                  setState(() {
-                    _mode = val;
-                  });
-                  if (widget.onModeChanged != null) {
-                    widget.onModeChanged!(val);
+    return Center(
+      child: Card(
+        margin: const EdgeInsets.symmetric(horizontal: 32, vertical: 64),
+        elevation: 8,
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text('Options', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 24),
+              ElevatedButton.icon(
+                icon: const Icon(Icons.menu),
+                label: const Text('Quit to Menu'),
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
+                onPressed: widget.onQuit,
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton.icon(
+                icon: const Icon(Icons.refresh),
+                label: const Text('Restart Game'),
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.orangeAccent),
+                onPressed: widget.onRestart,
+              ),
+              const SizedBox(height: 24),
+              const Text('Number Selector Mode', style: TextStyle(fontSize: 18)),
+              const SizedBox(height: 12),
+              SegmentedButton<NumSelectorMode>(
+                segments: const [
+                  ButtonSegment(
+                    value: NumSelectorMode.single,
+                    label: Text('Single'),
+                    icon: Icon(Icons.looks_one),
+                  ),
+                  ButtonSegment(
+                    value: NumSelectorMode.double,
+                    label: Text('Double'),
+                    icon: Icon(Icons.looks_two),
+                  ),
+                  ButtonSegment(
+                    value: NumSelectorMode.none,
+                    label: Text('None'),
+                    icon: Icon(Icons.block),
+                  ),
+                ],
+                selected: <NumSelectorMode>{_selectedMode},
+                onSelectionChanged: (Set<NumSelectorMode> newSelection) {
+                  if (newSelection.isNotEmpty) {
+                    _onModeChanged(newSelection.first);
                   }
-                }
-              },
-            ),
-          ],
+                },
+                showSelectedIcon: false,
+              ),
+              const SizedBox(height: 24),
+              if (widget.onBack != null)
+                OutlinedButton.icon(
+                  icon: const Icon(Icons.arrow_back),
+                  label: const Text('Back'),
+                  onPressed: widget.onBack,
+                ),
+            ],
+          ),
         ),
-        const SizedBox(height: 20),
-        ElevatedButton(
-          onPressed: widget.onRestart,
-          child: const Text('Restart Game'),
-        ),
-        const SizedBox(height: 20),
-        ElevatedButton(
-          onPressed: widget.onQuit,
-          child: const Text('Quit Game'),
-        ),
-        const SizedBox(height: 20),
-        ElevatedButton(
-          onPressed: widget.onBack,
-          child: const Text('Back'),
-        ),
-      ],
+      ),
     );
   }
 }
