@@ -1,6 +1,7 @@
 import 'package:flame/game.dart';
 import 'package:flame/events.dart';
 import 'package:flutter/services.dart';
+import 'package:game2/logic/player.dart';
 import 'package:game2/widgets/options_screen.dart';
 import '../config.dart';
 import 'inf_matrix_world.dart';
@@ -20,7 +21,7 @@ class InfinityNumberMatrixGameWithRouter extends FlameGame
   late InfMatrixWorld gameWorld;
 
   /// Notifies listeners of the player's score changes.
-  final ValueNotifier<int> playerScoreNotifier = ValueNotifier<int>(0);
+  final ValueNotifier<List<Player>> playerScoreNotifier = ValueNotifier<List<Player>>([]);
 
   /// Returns the background color for the game.
   @override
@@ -30,7 +31,7 @@ class InfinityNumberMatrixGameWithRouter extends FlameGame
   @override
   Future<void> onLoad() async {
     await super.onLoad();
-    gameWorld = InfMatrixWorld(scoreNotifier: playerScoreNotifier);
+    gameWorld = InfMatrixWorld();
     RouterManager.setupOverlaysAndRouter(
       game: this,
       gameWorld: gameWorld,
@@ -59,10 +60,10 @@ class InfinityNumberMatrixGameWithRouter extends FlameGame
     await add(router);
   }
 
-  void startGame({bool restart = false}) {
+  void startGame({bool restart = false, numPlayers = 1}) {
     if (restart) {
       // Remove the current game world if it exists
-      gameWorld.reset();
+      gameWorld.reset(numPlayers: numPlayers);
     }
     
     router.pushReplacementNamed('game');

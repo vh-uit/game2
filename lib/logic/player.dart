@@ -41,6 +41,18 @@ class Player {
     return score;
   }
 
+  Map<String, dynamic> toJson() => {
+        'name': name,
+        'score': score,
+        'remainingPoints': remainingPoints,
+      };
+
+  factory Player.fromJson(Map<String, dynamic> json) => Player(
+        name: json['name'] as String,
+        score: json['score'] as int,
+        remainingPoints: json['remainingPoints'] as int,
+      );
+
   @override
   String toString() {
     return 'Player{name: $name, score: $score, remainingPoints: $remainingPoints}';

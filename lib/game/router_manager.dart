@@ -1,5 +1,6 @@
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart' hide Route, OverlayRoute;
+import 'package:game2/logic/player.dart';
 import 'package:game2/widgets/options_screen.dart';
 import '../widgets/number_selector_widget.dart';
 import '../widgets/player_score_overlay.dart';
@@ -10,7 +11,7 @@ class RouterManager {
   static void setupOverlaysAndRouter({
     required FlameGame game,
     required InfMatrixWorld gameWorld,
-    required ValueNotifier<int> playerScoreNotifier,
+    required ValueNotifier<List<Player>> playerScoreNotifier,
     required Function(int) attemptClaimTile,
     required Function() openOptions,
     required Function() closeOptions,
@@ -51,8 +52,7 @@ class RouterManager {
     );
     game.overlays.addEntry('PlayerScore', (context, game) {
       return PlayerScoreOverlay(
-        player: gameWorld.board.currentPlayer,
-        scoreNotifier: playerScoreNotifier,
+        players: gameWorld.board.players,
       );
     });
     game.overlays.addEntry('SettingsIcon', (context, game) {
@@ -76,14 +76,22 @@ class RouterManager {
         ),
       );
     });
+    int playerCount = 1;
     late final RouterComponent router;
     router = RouterComponent(
       initialRoute: 'main_menu',
       routes: {
         'main_menu': Route(
-          () => MainMenuScreen(onStart: () async {
-            startGame();
-          }, onOptions: openOptions),
+          () => MainMenuScreen(
+            onStart: (count) {
+              playerCount = count;
+              router.pushReplacementNamed('game');
+              Future.delayed(const Duration(milliseconds: 30), () {
+                gameWorld.reset(numPlayers: playerCount);
+              });
+            },
+            onOptions: openOptions,
+          ),
           maintainState: false,
         ),
         'game': WorldRoute(

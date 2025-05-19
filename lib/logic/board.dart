@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:game2/logic/player.dart';
@@ -14,7 +16,8 @@ enum TileType {
 class Board {
   final Map<Point<int>, int> _tiles = {};
   final Set<Point<int>> _frontier = {};
-  late final List<Player> _players;
+  late  List<Player> _players;
+  late int remainPlayers;
   int _currentPlayerIndex = 0;
 
   Board({int playerNumber = 1}) {
@@ -24,6 +27,7 @@ class Board {
       playerNumber,
       (index) => Player(name: 'Player ${index + 1}'),
     );
+    remainPlayers = playerNumber; 
   }
 
   /// Returns a list of direct orthogonal neighbors for a given tile coordinate.
@@ -54,7 +58,10 @@ class Board {
       return {'addedFrontier': <Point<int>>[], 'claimedTile': null};
     }
 
-    _claimTile(tileToClaim, value);
+    if (!_claimTile(tileToClaim, value)) {
+      print("Error: Failed to claim tile $tileToClaim.");
+      return {'addedFrontier': <Point<int>>[], 'claimedTile': null};
+    }
     final newlyAddedFrontier = _addNewFrontier(tileToClaim);
 
     return {'addedFrontier': newlyAddedFrontier, 'claimedTile': tileToClaim};
@@ -99,9 +106,14 @@ class Board {
     }
   }
 
-  void _claimTile(Point<int> tile, int value) {
+  bool _claimTile(Point<int> tile, int value) {
+    final result = currentPlayer.makeMove(value);
+    if (!result) {
+      return false;
+    }
     _frontier.remove(tile);
     _tiles[tile] = value;
+    return true;
   }
 
   List<Point<int>> _addNewFrontier(Point<int> tile) {
@@ -137,16 +149,68 @@ class Board {
   int get currentPlayerIndex => _currentPlayerIndex;
 
   void nextPlayer() {
-    _currentPlayerIndex = (_currentPlayerIndex + 1) % _players.length;
+    if (currentPlayer.remainingPoints <= 0) {
+      remainPlayers--;
+    }
+    if (remainPlayers <= 0) {
+      print("Game Over");
+      return;
+    }
+    while (currentPlayer.remainingPoints <= 0) {
+      _currentPlayerIndex = (_currentPlayerIndex + 1) % _players.length;
+    }
   }
 
-  void reset() {
+  void reset({int playerNumber = 1}) {
     _tiles.clear();
     _frontier.clear();
     _frontier.add(const Point(0, 0));
     _currentPlayerIndex = 0;
-    for (final player in _players) {
-      player.reset();
+     _players = List.generate(
+      playerNumber,
+      (index) => Player(name: 'Player ${index + 1}'),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'tiles': Map.fromEntries(_tiles.entries.map((e) => MapEntry('${e.key.x},${e.key.y}', e.value))),
+      'frontier': _frontier.map((p) => '${p.x},${p.y}').toList(),
+      'players': _players.map((p) => p.toJson()).toList(),
+      'currentPlayerIndex': _currentPlayerIndex,
+      'remainPlayers': remainPlayers,
+    };
+  }
+
+  static Board fromJson(Map<String, dynamic> json) {
+    final board = Board(playerNumber: (json['players'] as List).length);
+    board._tiles.clear();
+    (json['tiles'] as Map<String, dynamic>).forEach((k, v) {
+      final parts = k.split(',');
+      board._tiles[Point(int.parse(parts[0]), int.parse(parts[1]))] = v as int;
+    });
+    board._frontier.clear();
+    for (final p in json['frontier']) {
+      final parts = (p as String).split(',');
+      board._frontier.add(Point(int.parse(parts[0]), int.parse(parts[1])));
     }
+    board._players = (json['players'] as List)
+        .map((p) => Player.fromJson(p as Map<String, dynamic>))
+        .toList();
+    board._currentPlayerIndex = json['currentPlayerIndex'] ?? 0;
+    board.remainPlayers = json['remainPlayers'] ?? board._players.length;
+    return board;
+  }
+
+  Future<void> saveToFile(String path) async {
+    final file = await File(path).create(recursive: true);
+    await file.writeAsString(jsonEncode(toJson()));
+  }
+
+  static Future<Board> loadFromFile(String path) async {
+    final file = File(path);
+    final jsonStr = await file.readAsString();
+    final jsonMap = jsonDecode(jsonStr) as Map<String, dynamic>;
+    return Board.fromJson(jsonMap);
   }
 }

@@ -6,14 +6,13 @@ import 'package:flame/events.dart';
 import 'package:flutter/services.dart';
 import 'package:game2/config.dart';
 import 'package:game2/logic/board.dart';
+import 'package:game2/logic/player.dart';
 import 'cell_manager.dart';
 import 'dart:math' as math_dart;
-import 'package:flutter/foundation.dart';
 
 class InfMatrixWorld extends World {
   /// The logical board for the game.
   late Board board;
-
 
   /// Manages cell components within this world.
   late CellManager cellManager;
@@ -21,11 +20,8 @@ class InfMatrixWorld extends World {
   /// The initial zoom level for the world view.
   late double startZoom;
 
-  /// Notifies listeners of score changes.
-  final ValueNotifier<int> scoreNotifier;
-
-  /// Creates an [InfMatrixWorld] with the given [scoreNotifier].
-  InfMatrixWorld({required this.scoreNotifier});
+  /// Creates an [InfMatrixWorld].
+  InfMatrixWorld();
 
   /// Loads the board, cell manager, and player, and sets up overlays.
   @override
@@ -33,18 +29,17 @@ class InfMatrixWorld extends World {
     await super.onLoad();
     board = Board();
     cellManager = CellManager(this);
+    await reset();
     final game = findGame();
     game?.overlays.add('NumSelectorBottom');
     game?.overlays.add('PlayerScore');
     game?.overlays.add('SettingsIcon');
-    await reset();
   }
 
-  Future<void> reset() async {
-    board.reset();
+  Future<void> reset({int numPlayers = 1}) async {
+    board.reset(playerNumber: numPlayers);
     cellManager.initializeBoardView(board);
     cellManager.selectedCellPosition = null;
-    scoreNotifier.value = board.currentPlayer.score;
   }
 
   /// Attempts to claim a tile with the given [number].
@@ -71,9 +66,10 @@ class InfMatrixWorld extends World {
       if (chains.isNotEmpty) {
         animateChainsHighlight(chains);
         board.currentPlayer.updateScore(board.currentPlayer.calculateScoreFromChains(chains));
-        scoreNotifier.value = board.currentPlayer.score;
       }
+      board.nextPlayer();
     }
+
   }
 
   // The following input handlers must be called from the parent FlameGame
