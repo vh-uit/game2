@@ -10,8 +10,5 @@ import 'game/game.dart';
 
 void main() {
   final game = InfinityNumberMatrixGameWithRouter();
-  // runApp(GameWidget(game: game));
-  runApp(MaterialApp(home: 
-  Scaffold(
-  body: WinScreen(playerName: "Player 1", score: 127))));
+  runApp(GameWidget(game: game));
 }
