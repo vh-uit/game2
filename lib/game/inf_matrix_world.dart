@@ -6,6 +6,7 @@ import 'package:flame/events.dart';
 import 'package:flutter/services.dart';
 import 'package:game2/config.dart';
 import 'package:game2/logic/board.dart';
+import 'package:game2/game/game.dart';
 import 'cell_manager.dart';
 import 'dart:math' as math_dart;
 import 'package:flutter/foundation.dart';
@@ -37,6 +38,7 @@ class InfMatrixWorld extends World {
     final game = findGame();
     game?.overlays.add('NumSelector');
     game?.overlays.add('PlayerScore');
+    game?.overlays.add('SettingsIcon');
   }
 
   /// Creates a new [Board] in an isolate.

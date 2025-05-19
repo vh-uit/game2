@@ -81,11 +81,36 @@ class InfinityNumberMatrixGameWithRouter extends FlameGame
         return PlayerScoreOverlay(
           player: world.board.currentPlayer,
           scoreNotifier: playerScoreNotifier,
+          // game: this, // Removed game parameter
         );
       } else {
         // fallback empty widget
         return const SizedBox.shrink();
       }
+    });
+    // Add new overlay for Settings Icon
+    overlays.addEntry('SettingsIcon', (context, game) {
+      return Positioned(
+        top: 24,
+        right: 24,
+        child: GestureDetector(
+          onTap: () {
+            openOptions(); // Call openOptions from the game instance
+          },
+          child: Container(
+            padding: const EdgeInsets.all(8), // Add some padding around the icon
+            decoration: BoxDecoration(
+              color: Colors.black.withOpacity(0.6),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Icon(
+              Icons.settings,
+              color: Colors.white,
+              size: 24,
+            ),
+          ),
+        ),
+      );
     });
     router = RouterComponent(
       initialRoute: 'main_menu',

@@ -22,8 +22,8 @@ class NumSelectorWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 0-9 in a single row
-    final numbers = List.generate(10, (i) => i);
+    // 1-9 in a single row
+    final numbers = List.generate(9, (i) => i + 1);
 
     return IgnorePointer(
       ignoring: false,
