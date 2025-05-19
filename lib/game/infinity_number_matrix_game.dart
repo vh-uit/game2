@@ -5,14 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:game2/config.dart';
 import 'package:game2/logic/board.dart';
-import 'package:game2/game/components/cell_component.dart';
+import 'cell_manager.dart';
 import 'dart:math' as math_dart;
+import 'package:flutter/foundation.dart';
 
 class InfinityNumberMatrixGame extends FlameGame
     with ScrollDetector, ScaleDetector, KeyboardEvents {
   late Board board;
-  math_dart.Point<int>? _selectedCellPosition;
-  final Map<math_dart.Point<int>, CellComponent> _cellComponents = {};
+  late final CellManager cellManager;
 
   @override
   Color backgroundColor() => const Color.fromARGB(255, 255, 249, 225);
@@ -20,75 +20,34 @@ class InfinityNumberMatrixGame extends FlameGame
   @override
   Future<void> onLoad() async {
     await super.onLoad();
-    board = Board();
-    _selectedCellPosition = null;
-
-    _initializeBoardView();
+    // Move board creation to a background isolate
+    board = await compute(_createBoardInIsolate, null);
+    cellManager = CellManager(this);
+    cellManager.selectedCellPosition = null;
+    cellManager.initializeBoardView(board);
   }
 
-  void _initializeBoardView() {
-    for (final point in board.frontier) {
-      _addCellComponent(point, TileType.frontier);
-    }
-    for (final point in board.tiles) {
-      _addCellComponent(point, TileType.claimed);
-    }
-  }
-
-  void _addCellComponent(math_dart.Point<int> gridPos, TileType type) {
-    if (_cellComponents.containsKey(gridPos)) return; // Already exists
-
-    final component = CellComponent(
-      gridPosition: gridPos,
-      type: type,
-      gameRef: this,
-    );
-    _cellComponents[gridPos] = component;
-    world.add(component);
-  }
-
-  void _updateCellComponent(math_dart.Point<int> gridPos, TileType newType) {
-    if (_cellComponents.containsKey(gridPos)) {
-      _cellComponents[gridPos]!.updateType(newType);
-    } else {
-      _addCellComponent(gridPos, newType);
-    }
+  // Helper for compute
+  static Board _createBoardInIsolate(dynamic _) {
+    return Board();
   }
 
   /// Attempts to claim a tile at the selected position with the given number.
   void attemptClaimTile(int number) => _attemptClaimTile(number);
 
   void _attemptClaimTile(int number) {
-    if (_selectedCellPosition == null) return;
-    final result = board.claimFrontierTile(_selectedCellPosition!, number);
+    if (cellManager.selectedCellPosition == null) return;
+    final result = board.claimFrontierTile(cellManager.selectedCellPosition!, number);
     if (result['claimedTile'] != null) {
-      _cellComponents[_selectedCellPosition!]!.setValueAndType(number, TileType.claimed);
+      cellManager.cellComponents[cellManager.selectedCellPosition!]!.setValueAndType(number, TileType.claimed);
       for (final frontier in result['addedFrontier'] as List<math_dart.Point<int>>) {
-        _updateCellComponent(frontier, TileType.frontier);
+        cellManager.updateCellComponent(frontier, TileType.frontier);
       }
-      final chains = board.findChainsWithSum(_selectedCellPosition!, 20);
+      final chains = board.findChainsWithSum(cellManager.selectedCellPosition!, 20);
       if (chains.isNotEmpty) {
         animateChainsHighlight(chains);
       }
     }
-  }
-
-  /// Handles selection/deselection of a cell.
-  void _selectCell(math_dart.Point<int> tappedGridPosition) {
-    if (_selectedCellPosition == tappedGridPosition) {
-      _cellComponents[_selectedCellPosition!]!.isSelected = false;
-      _selectedCellPosition = null;
-    } else {
-      if (_selectedCellPosition != null) {
-        _cellComponents[_selectedCellPosition!]!.isSelected = false;
-      }
-      _selectedCellPosition = tappedGridPosition;
-      _cellComponents[_selectedCellPosition!]!.isSelected = true;
-    }
-  }
-
-  void handleTileTap(math_dart.Point<int> tappedGridPosition) {
-    _selectCell(tappedGridPosition);
   }
 
   void clampZoom(double zoomDelta) {
@@ -150,7 +109,7 @@ class InfinityNumberMatrixGame extends FlameGame
   /// Animates (highlights) the given list of points, one after another, each for 0.7s.
   Future<void> animateChainHighlight(List<math_dart.Point<int>> points, Duration duration) async {
     for (final point in points) {
-      final cell = _cellComponents[point];
+      final cell = cellManager.cellComponents[point];
       if (cell != null) {
         await cell.highlight(duration: duration, nth: points.indexOf(point).toDouble());
       }
@@ -170,7 +129,7 @@ class InfinityNumberMatrixGame extends FlameGame
     }
     final futures = <Future>[];
     for (final point in allPoints) {
-      final cell = _cellComponents[point];
+      final cell = cellManager.cellComponents[point];
       if (cell != null) {
         futures.add(cell.highlight(duration: const Duration(milliseconds: 700), nth: 1, color: highlight2Color.color));
       }
