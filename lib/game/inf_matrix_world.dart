@@ -33,7 +33,7 @@ class InfMatrixWorld extends World {
     board = await compute(_createBoardInIsolate, null);
     cellManager = CellManager(this);
     final game = findGame();
-    game?.overlays.add('NumSelector');
+    game?.overlays.add('NumSelectorBottom');
     game?.overlays.add('PlayerScore');
     game?.overlays.add('SettingsIcon');
     await reset();

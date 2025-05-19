@@ -42,8 +42,16 @@ class InfinityNumberMatrixGameWithRouter extends FlameGame
       numSelectorMode: numSelectorMode,
       onModeChanged: (mode) {
         numSelectorMode = mode;
-        overlays.remove('NumSelector');
-        overlays.add('NumSelector');
+        print('NumSelectorMode changed to: $mode');
+        overlays.remove('NumSelectorBottom');
+        overlays.remove('NumSelectorTop');
+        if (mode == NumSelectorMode.none) {
+          return;
+        }
+        overlays.add("NumSelectorBottom");
+        if (mode == NumSelectorMode.double) {
+          overlays.add("NumSelectorTop");
+        }
       },
       addOverlay: overlays.add,
       removeOverlay: overlays.remove,

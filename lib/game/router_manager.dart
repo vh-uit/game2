@@ -21,51 +21,33 @@ class RouterManager {
     required void Function(String) removeOverlay,
     required void Function(RouterComponent) setRouter,
   }) {
+    
     game.overlays.addEntry(
-      'NumSelector',
-      (context, game) {
-        if (numSelectorMode == NumSelectorMode.none) {
-          return const SizedBox.shrink();
-        } else if (numSelectorMode == NumSelectorMode.single) {
-          return NumSelectorWidget(
-            onNumberSelected: (number) {
-              attemptClaimTile(number);
-            },
-            buttonSize: 48,
-            spacing: 8,
-            borderRadius: 12,
-            fontSize: 24,
-            bottomAlignment: true,
-          );
-        } else if (numSelectorMode == NumSelectorMode.double) {
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              NumSelectorWidget(
-                onNumberSelected: (number) {
-                  attemptClaimTile(number);
-                },
-                buttonSize: 48,
-                spacing: 8,
-                borderRadius: 12,
-                fontSize: 24,
-                bottomAlignment: false,
-              ),
-              NumSelectorWidget(
-                onNumberSelected: (number) {
-                  attemptClaimTile(number);
-                },
-                buttonSize: 48,
-                spacing: 8,
-                borderRadius: 12,
-                fontSize: 24,
-                bottomAlignment: true,
-              ),
-            ],
-          );
-        }
-        return const SizedBox.shrink();
+      'NumSelectorBottom',
+      (context, game) => NumSelectorWidget(
+      onNumberSelected: (number) {
+        attemptClaimTile(number);
       },
+      buttonSize: 48,
+      spacing: 8,
+      borderRadius: 12,
+      fontSize: 24,
+      bottomAlignment: true,
+      ),
+    );
+
+    game.overlays.addEntry(
+      'NumSelectorTop',
+      (context, game) => NumSelectorWidget(
+      onNumberSelected: (number) {
+        attemptClaimTile(number);
+      },
+      buttonSize: 48,
+      spacing: 8,
+      borderRadius: 12,
+      fontSize: 24,
+      bottomAlignment: false,
+      ),
     );
     game.overlays.addEntry('PlayerScore', (context, game) {
       return PlayerScoreOverlay(
@@ -103,9 +85,11 @@ class RouterManager {
             addOverlay('Loading');
             startGame();
           }, onOptions: openOptions),
+          maintainState: false,
         ),
         'game': WorldRoute(
           () => gameWorld,
+          maintainState: false,
         ),
         'options': OverlayRoute((context, game) => OptionsScreen(
           onBack: closeOptions,
@@ -122,7 +106,9 @@ class RouterManager {
           numSelectorMode: numSelectorMode,
           onModeChanged: onModeChanged,
         )),
+
       },
+
     );
     game.overlays.addEntry('Loading', (context, game) => const Center(
       child: CircularProgressIndicator(color: Colors.amber),
