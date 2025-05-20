@@ -6,6 +6,7 @@ class WinScreen extends StatelessWidget {
   final VoidCallback? onRestart;
   final VoidCallback? onQuit;
 
+
   const WinScreen({
     super.key,
     required this.playerName,

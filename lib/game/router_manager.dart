@@ -5,6 +5,7 @@ import 'package:game2/widgets/options_screen.dart';
 import '../widgets/number_selector_widget.dart';
 import '../widgets/player_score_overlay.dart';
 import 'screens/main_menu_screen.dart';
+import 'screens/win_screen.dart';
 import 'inf_matrix_world.dart';
 
 class RouterManager {
@@ -76,6 +77,22 @@ class RouterManager {
         ),
       );
     });
+
+    game.overlays.addEntry('WinScreen', (context, game) {
+      return WinScreen(
+        playerName: gameWorld.board.currentPlayer.name, // Replace with actual winner name
+        score: gameWorld.board.currentPlayer.score, // Replace with actual score
+        onRestart: () {
+          game.overlays.remove('WinScreen');
+          startGame(restart: true);
+        },
+        onQuit: () {
+          game.overlays.remove('WinScreen');
+          startGame(restart: true);
+          // Optionally, navigate to main menu if needed
+        },
+      );
+    });
     int playerCount = 1;
     late final RouterComponent router;
     router = RouterComponent(
@@ -86,6 +103,10 @@ class RouterManager {
             onStart: (count) {
               playerCount = count;
               router.pushReplacementNamed('game');
+              addOverlay('NumSelectorBottom');
+              addOverlay('NumSelectorTop');
+              addOverlay('PlayerScore');
+              addOverlay('SettingsIcon');
               Future.delayed(const Duration(milliseconds: 30), () {
                 gameWorld.reset(numPlayers: playerCount);
               });
@@ -101,16 +122,35 @@ class RouterManager {
         'options': OverlayRoute((context, game) => OptionsScreen(
           onBack: closeOptions,
           onRestart: () {
-            closeOptions();
             startGame(restart: true);
           },
           onQuit: () {
-            closeOptions();
             startGame(restart: true);
+            removeOverlay("NumSelectorBottom");
+            removeOverlay("NumSelectorTop");
+            removeOverlay("PlayerScore");
+            removeOverlay("SettingsIcon");
             router.pushNamed('main_menu');
           },
           numSelectorMode: numSelectorMode,
           onModeChanged: onModeChanged,
+        )),
+        'win': OverlayRoute((context, game) => WinScreen(
+          playerName: 'Winner', // Replace with actual winner name
+          score: 0, // Replace with actual score
+          onRestart: () {
+            removeOverlay('WinScreen');
+            startGame(restart: true);
+          },
+          onQuit: () {
+            removeOverlay('WinScreen');
+            startGame(restart: true);
+            removeOverlay("NumSelectorBottom");
+            removeOverlay("NumSelectorTop");
+            removeOverlay("PlayerScore");
+            removeOverlay("SettingsIcon");
+            router.pushNamed('main_menu');
+          },
         )),
       },
     );

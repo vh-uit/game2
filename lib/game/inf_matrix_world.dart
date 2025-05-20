@@ -30,16 +30,17 @@ class InfMatrixWorld extends World {
     board = Board();
     cellManager = CellManager(this);
     await reset();
-    final game = findGame();
-    game?.overlays.add('NumSelectorBottom');
-    game?.overlays.add('PlayerScore');
-    game?.overlays.add('SettingsIcon');
   }
 
   Future<void> reset({int numPlayers = 1}) async {
     board.reset(playerNumber: numPlayers);
     cellManager.initializeBoardView(board);
     cellManager.selectedCellPosition = null;
+    final game = findGame();
+    game?.overlays.remove("PlayerScore");
+    game?.overlays.add('PlayerScore');
+    game?.overlays.add('SettingsIcon');
+    game?.overlays.add('NumSelectorBottom');
   }
 
   /// Attempts to claim a tile with the given [number].
@@ -65,11 +66,18 @@ class InfMatrixWorld extends World {
       );
       if (chains.isNotEmpty) {
         animateChainsHighlight(chains);
-        board.currentPlayer.updateScore(board.currentPlayer.calculateScoreFromChains(chains));
+        board.currentPlayer.updateScore(
+          board.currentPlayer.calculateScoreFromChains(chains),
+        );
       }
-      board.nextPlayer();
-    }
+      if (board.nextPlayer()) {
+        findGame()?.overlays.add('WinScreen');
+      }
+      print(board.currentPlayer.name);
 
+      findGame()?.overlays.remove('PlayerScore');
+      findGame()?.overlays.add('PlayerScore');
+    }
   }
 
   // The following input handlers must be called from the parent FlameGame

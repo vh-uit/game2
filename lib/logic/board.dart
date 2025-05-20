@@ -148,17 +148,20 @@ class Board {
   Player get currentPlayer => _players[_currentPlayerIndex];
   int get currentPlayerIndex => _currentPlayerIndex;
 
-  void nextPlayer() {
+  bool nextPlayer() {
     if (currentPlayer.remainingPoints <= 0) {
       remainPlayers--;
     }
     if (remainPlayers <= 0) {
       print("Game Over");
-      return;
+      _currentPlayerIndex = _players.indexWhere((p) => p.score == _players.map((pl) => pl.score).reduce(max));
+      return true;
     }
-    while (currentPlayer.remainingPoints <= 0) {
+    do  {
       _currentPlayerIndex = (_currentPlayerIndex + 1) % _players.length;
-    }
+    } while (_players[_currentPlayerIndex].remainingPoints <= 0);
+
+    return false;
   }
 
   void reset({int playerNumber = 1}) {
@@ -166,6 +169,7 @@ class Board {
     _frontier.clear();
     _frontier.add(const Point(0, 0));
     _currentPlayerIndex = 0;
+    remainPlayers = playerNumber;
      _players = List.generate(
       playerNumber,
       (index) => Player(name: 'Player ${index + 1}'),

@@ -41,7 +41,7 @@ class PlayerScoreRow extends StatelessWidget {
           ),
           const SizedBox(width: 12),
           Text(
-            'Score: ${player.score}',
+            'Score: ${player.score} / ${player.remainingPoints}',
             style: const TextStyle(
               color: Colors.white,
               fontSize: 18,
